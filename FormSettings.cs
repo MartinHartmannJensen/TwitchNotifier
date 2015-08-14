@@ -25,6 +25,7 @@ namespace ArethruTwitchNotifier
             checkBox1.Checked = Settings.Default.RunAutoUpdateAtStart;
             checkBox2.Checked = Settings.Default.StartWithWindows;
             checkBox3.Checked = Settings.Default.StartMinimized;
+            checkBox4.Checked = Settings.Default.PlaySound;
         }
 
         private void FormSettings_FormClosing(object sender, FormClosingEventArgs e)
@@ -87,6 +88,11 @@ namespace ArethruTwitchNotifier
         private void checkBox3_CheckedChanged(object sender, EventArgs e)
         {
             Settings.Default.StartMinimized = checkBox3.Checked;
+        }
+
+        private void checkBox4_CheckedChanged(object sender, EventArgs e)
+        {
+            Settings.Default.PlaySound = checkBox4.Checked;
         }
     }
 }

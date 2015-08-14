@@ -73,7 +73,9 @@ namespace ArethruTwitchNotifier
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            GetLiveStreamsSetText();
+            streamInfo = RESTcall.GetLiveStreams();
+
+            LiveStreamsSetText(streamInfo);
         }
 
         private void Clear_Click(object sender, EventArgs e)
@@ -115,13 +117,11 @@ namespace ArethruTwitchNotifier
             richTextBox1.Text = "Something went wrong";
         }
 
-        private void LiveStreamsSetText()
+        private void LiveStreamsSetText(StreamsInfo si)
         {
-            var data = streamInfo;
-
             StringBuilder sb = new StringBuilder();
 
-            foreach (var item in data.Streams)
+            foreach (var item in si.Streams)
             {
                 sb.AppendLine(item.Channel.Name);
                 sb.AppendLine("Viewers: " + item.Viewers);
@@ -136,7 +136,9 @@ namespace ArethruTwitchNotifier
 
         private void btnXamlWindow_Click(object sender, EventArgs e)
         {
-            InvokeNotification(EventArgs.Empty);
+            streamInfo = RESTcall.GetLiveStreams();
+
+            DisplayNotification(BuildNotificationList(streamInfo));
         }
 
         private void Form1_Resize(object sender, EventArgs e)
@@ -186,6 +188,7 @@ namespace ArethruTwitchNotifier
             if (!tempSI.isSucces)
             {
                 richTextBox1.Text = "Something went wrong, check your connection and make sure that you have configured your User Token in Settings";
+                DisplayNotification("Connection error");
                 return;
             }
 
@@ -194,41 +197,72 @@ namespace ArethruTwitchNotifier
                 bool newChannelFound = false;
                 foreach (var item in tempSI.Streams)
                 {
-                    if (streamInfo.Streams.Exists(x => x.Channel.Name.Equals(item.Channel.Name)))
-                    {
-
-                    }
-                    else
-                    {
+                    if (!streamInfo.Streams.Exists(x => x.Channel.Name.Equals(item.Channel.Name)))
                         newChannelFound = true;
-                    }
                 }
 
                 if (!newChannelFound)
+                {
+                    streamInfo = tempSI;
+                    LiveStreamsSetText(tempSI);
                     return;
+                }  
             }
 
             streamInfo = tempSI;
+            LiveStreamsSetText(tempSI);
+            DisplayNotification(BuildNotificationList(tempSI));
 
-            LiveStreamsSetText();
+            if (Settings.Default.PlaySound)
+                PlaySound("nSound.wav");
+        }
 
+        private string BuildNotificationList(StreamsInfo si)
+        {
             StringBuilder sb = new StringBuilder();
-            foreach (var item in streamInfo.Streams)
+            foreach (var item in si.Streams)
             {
                 sb.AppendLine(item.Channel.Name);
                 sb.AppendLine("playing " + item.Game);
                 sb.AppendLine();
             }
 
+            return sb.ToString();
+        }
+
+        private void DisplayNotification(string content)
+        {
             if (noteW != null)
                 noteW.Close();
+
             noteW = new NotificationWindow();
             noteW.ShowInTaskbar = false;
-            noteW.StreamList.Text = sb.ToString();
+            noteW.StreamList.Text = content;
             int windowseconds = Settings.Default.WindowTimeOnScreen;
             noteW.WindowTimeOnScreen.KeyTime = new TimeSpan(0, 0, windowseconds);
             noteW.WindowTimeOnScreen2.KeyTime = new TimeSpan(0, 0, windowseconds + 2);
             noteW.Show();
+        }
+
+        private void PlaySound(string name)
+        {
+            string soundName = name;
+
+            string soundPath = Environment.CurrentDirectory + @"\" + soundName;
+
+            try
+            {
+                System.Media.SoundPlayer player = new System.Media.SoundPlayer(soundPath);
+                player.Play();
+            }
+            catch (System.IO.FileNotFoundException)
+            {
+                System.Media.SystemSounds.Asterisk.Play();
+            }
+            catch (System.InvalidOperationException)
+            {
+                System.Media.SystemSounds.Asterisk.Play();
+            }
         }
     }
 }
