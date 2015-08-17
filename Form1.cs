@@ -15,15 +15,12 @@ namespace ArethruTwitchNotifier
 
     public partial class Form1 : Form
     {
-        #region Fields
-        NotifyIcon notifyIcon1;
-        public NotificationWindow noteW;
-        Thread nuT;
         public MyNotificationEventHandler NotifyEvent;
+        NotifyIcon notifyIcon1;
+        Thread nuT;
         FormSettings sForm;
-
         StreamsInfo streamInfo = null;
-        #endregion
+        Thread notifyWindowThread;
 
         public Form1()
         {
@@ -36,12 +33,14 @@ namespace ArethruTwitchNotifier
             notifyIcon1.Icon = this.Icon;
             notifyIcon1.BalloonTipText = "ArethruTwitchNotifier";
             notifyIcon1.Text = "ArethruTwitchNotifier";
-            notifyIcon1.MouseDoubleClick += NotifyIcon1_DoubleClick;
+            notifyIcon1.MouseDoubleClick += NotifyIcon1_Click;
+            notifyIcon1.ContextMenu  = new ContextMenu(new MenuItem[2] { new MenuItem("Show Live"), new MenuItem("Exit") });
+            notifyIcon1.ContextMenu.MenuItems[0].Click += btnXamlWindow_Click;
+            notifyIcon1.ContextMenu.MenuItems[1].Click += Form1_Close;
 
             this.FormClosed += Form1_FormClosed;
             this.NotifyEvent += NotificationReceived;
 
-            noteW = null;
             sForm = null;
 
             if (Settings.Default.RunAutoUpdateAtStart)
@@ -56,7 +55,6 @@ namespace ArethruTwitchNotifier
                 this.WindowState = FormWindowState.Minimized;
                 this.ShowInTaskbar = false;
             }
-
         }
 
         public void InvokeNotification(EventArgs e)
@@ -67,8 +65,13 @@ namespace ArethruTwitchNotifier
 
         void Form1_FormClosed(object sender, FormClosedEventArgs e)
         {
-            if(nuT != null && nuT.IsAlive)
+            if (nuT != null && nuT.IsAlive)
                 nuT.Abort();
+        }
+
+        void Form1_Close(object sender, EventArgs e)
+        {
+            this.Close();
         }
 
         private void btnRefresh_Click(object sender, EventArgs e)
@@ -89,56 +92,11 @@ namespace ArethruTwitchNotifier
             richTextBox1.Text = RESTcall.GetLiveStreamsFullString();
         }
 
-        private void GetLiveStreamsSetText()
-        {
-            richTextBox1.Clear();
-            var data = RESTcall.GetLiveStreams();
-
-            if (data.isSucces)
-            {
-                streamInfo = data;
-
-                StringBuilder sb = new StringBuilder();
-
-                foreach (var item in data.Streams)
-                {
-                    sb.AppendLine(item.Channel.Name);
-                    sb.AppendLine("Viewers: " + item.Viewers);
-                    sb.AppendLine(item.Game);
-                    sb.AppendLine(item.Channel.Url);
-                    sb.AppendLine();
-                }
-
-                richTextBox1.Clear();
-                richTextBox1.Text = sb.ToString();
-                return;
-            }
-
-            richTextBox1.Text = "Something went wrong";
-        }
-
-        private void LiveStreamsSetText(StreamsInfo si)
-        {
-            StringBuilder sb = new StringBuilder();
-
-            foreach (var item in si.Streams)
-            {
-                sb.AppendLine(item.Channel.Name);
-                sb.AppendLine("Viewers: " + item.Viewers);
-                sb.AppendLine(item.Game);
-                sb.AppendLine(item.Channel.Url);
-                sb.AppendLine();
-            }
-
-            richTextBox1.Clear();
-            richTextBox1.Text = sb.ToString();
-        }
-
         private void btnXamlWindow_Click(object sender, EventArgs e)
         {
             streamInfo = RESTcall.GetLiveStreams();
 
-            DisplayNotification(BuildNotificationList(streamInfo));
+            DisplayNotification(streamInfo);
         }
 
         private void Form1_Resize(object sender, EventArgs e)
@@ -147,15 +105,15 @@ namespace ArethruTwitchNotifier
             {
                 notifyIcon1.Visible = true;
                 this.Hide();
-              
+
             }
-            else if(FormWindowState.Normal == this.WindowState)
+            else if (FormWindowState.Normal == this.WindowState)
             {
                 notifyIcon1.Visible = false;
             }
         }
 
-        private void NotifyIcon1_DoubleClick(object sender, MouseEventArgs e)
+        private void NotifyIcon1_Click(object sender, MouseEventArgs e)
         {
             this.Show();
             this.WindowState = FormWindowState.Normal;
@@ -176,11 +134,6 @@ namespace ArethruTwitchNotifier
             sForm.Show();
         }
 
-        /// <summary>
-        /// Executes code On NotifyEvent. Gets data from RESTcall and determines if something new has happened.
-        /// Displays the popup in case: true
-        /// Will probably get cleaned up in the future and have functionality divivided in better manner
-        /// </summary>
         private void NotificationReceived(object sender, EventArgs e)
         {
             var tempSI = RESTcall.GetLiveStreams();
@@ -188,7 +141,6 @@ namespace ArethruTwitchNotifier
             if (!tempSI.isSucces)
             {
                 richTextBox1.Text = "Something went wrong, check your connection and make sure that you have configured your User Token in Settings";
-                DisplayNotification("Connection error");
                 return;
             }
 
@@ -206,42 +158,42 @@ namespace ArethruTwitchNotifier
                     streamInfo = tempSI;
                     LiveStreamsSetText(tempSI);
                     return;
-                }  
+                }
             }
 
             streamInfo = tempSI;
             LiveStreamsSetText(tempSI);
-            DisplayNotification(BuildNotificationList(tempSI));
+            DisplayNotification(tempSI);
 
             if (Settings.Default.PlaySound)
                 PlaySound("nSound.wav");
         }
 
-        private string BuildNotificationList(StreamsInfo si)
+        private void DisplayNotification(StreamsInfo sInfo)
         {
-            StringBuilder sb = new StringBuilder();
-            foreach (var item in si.Streams)
-            {
-                sb.AppendLine(item.Channel.Name);
-                sb.AppendLine("playing " + item.Game);
-                sb.AppendLine();
-            }
+            if (notifyWindowThread != null && notifyWindowThread.IsAlive)
+                notifyWindowThread.Abort();
 
-            return sb.ToString();
-        }
+            notifyWindowThread = new Thread(new ThreadStart(() => {
+                NotificationWindow w = new NotificationWindow();
+                w.ShowInTaskbar = false;
+                w.listDataBinding.ItemsSource = sInfo.Streams;
+                int windowseconds = Settings.Default.WindowTimeOnScreen;
+                w.WindowTimeOnScreen.KeyTime = new TimeSpan(0, 0, windowseconds);
+                w.WindowTimeOnScreen2.KeyTime = new TimeSpan(0, 0, windowseconds + 2);
 
-        private void DisplayNotification(string content)
-        {
-            if (noteW != null)
-                noteW.Close();
+                w.Closed += (s, e) => 
+                    System.Windows.Threading.Dispatcher.CurrentDispatcher.BeginInvokeShutdown(System.Windows.Threading.DispatcherPriority.Background);
 
-            noteW = new NotificationWindow();
-            noteW.ShowInTaskbar = false;
-            noteW.StreamList.Text = content;
-            int windowseconds = Settings.Default.WindowTimeOnScreen;
-            noteW.WindowTimeOnScreen.KeyTime = new TimeSpan(0, 0, windowseconds);
-            noteW.WindowTimeOnScreen2.KeyTime = new TimeSpan(0, 0, windowseconds + 2);
-            noteW.Show();
+                w.Show();
+
+                System.Windows.Threading.Dispatcher.Run();
+            
+            }));
+
+            notifyWindowThread.SetApartmentState(ApartmentState.STA);
+            notifyWindowThread.IsBackground = true;
+            notifyWindowThread.Start();
         }
 
         private void PlaySound(string name)
@@ -263,6 +215,23 @@ namespace ArethruTwitchNotifier
             {
                 System.Media.SystemSounds.Asterisk.Play();
             }
+        }
+
+        private void LiveStreamsSetText(StreamsInfo si)
+        {
+            StringBuilder sb = new StringBuilder();
+
+            foreach (var item in si.Streams)
+            {
+                sb.AppendLine(item.Channel.Name);
+                sb.AppendLine("Viewers: " + item.Viewers);
+                sb.AppendLine(item.Game);
+                sb.AppendLine(item.Channel.Url);
+                sb.AppendLine();
+            }
+
+            richTextBox1.Clear();
+            richTextBox1.Text = sb.ToString();
         }
     }
 }

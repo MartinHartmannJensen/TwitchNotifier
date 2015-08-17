@@ -31,6 +31,9 @@ namespace ArethruTwitchNotifier
         [JsonProperty("viewers")]
         public string Viewers { get; set; }
 
+        [JsonProperty("created_at")]
+        public DateTime CreatedAt { get; set; }
+
         [JsonProperty("channel")]
         public StreamsObjChannel Channel { get; set; }
     }

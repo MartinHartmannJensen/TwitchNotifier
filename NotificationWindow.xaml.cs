@@ -24,7 +24,11 @@ namespace ArethruTwitchNotifier
         public NotificationWindow()
         {
             InitializeComponent();
+            SetPosition();
+        }
 
+        public void SetPosition()
+        {
             Dispatcher.BeginInvoke(DispatcherPriority.ApplicationIdle, new Action(() =>
             {
                 var workingArea = System.Windows.Forms.Screen.PrimaryScreen.WorkingArea;
@@ -36,9 +40,15 @@ namespace ArethruTwitchNotifier
             }));
         }
 
-        private void Button_Click(object sender, RoutedEventArgs e)
+        private void btnClose_Click(object sender, RoutedEventArgs e)
         {
             this.Close();
         }
+
+        private void Storyboard_Completed(object sender, EventArgs e)
+        {
+            this.Close();
+        }
+
     }
 }

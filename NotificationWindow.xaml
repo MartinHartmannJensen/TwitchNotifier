@@ -1,7 +1,12 @@
 ﻿<Window x:Class="ArethruTwitchNotifier.NotificationWindow"
              xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-             Title="Notification Popup" WindowStyle="None" Width="300" SizeToContent="Height" AllowsTransparency="True" Background="Transparent">
+             xmlns:sys="clr-namespace:System;assembly=mscorlib"
+             xmlns:d="clr-namespace:ArethruTwitchNotifier"
+             Title="Twitch Notification" WindowStyle="None"  Width="300" SizeToContent="Height" AllowsTransparency="True" Background="Transparent">
+
+
+
 
     <Grid RenderTransformOrigin="0,1" >
 
@@ -15,27 +20,38 @@
                     </Grid.ColumnDefinitions>
 
                     <TextBlock TextWrapping="Wrap" Margin="2,2,10,2" Foreground="White" TextDecorations="{x:Null}" FontSize="14"><Bold>Twitch Notification</Bold></TextBlock>
-                    <Button Content="X" Grid.Column="1" HorizontalAlignment="Right" Width="21" Height="21" RenderTransformOrigin="0.476,1.048" Margin="0,2,0,5" BorderBrush="Black" Click="Button_Click">
-                        <Button.Background>
-                            <LinearGradientBrush EndPoint="0,1" StartPoint="0,0">
-                                <GradientStop Color="#FFF3F3F3" Offset="0"/>
-                                <GradientStop Color="#FFEBEBEB" Offset="0.5"/>
-                                <GradientStop Color="#FFDDDDDD" Offset="0.004"/>
-                                <GradientStop Color="Black" Offset="1"/>
-                            </LinearGradientBrush>
-                        </Button.Background>
-                    </Button>
+                    <Button x:Name="btnClose" Content="X" Grid.Column="1" HorizontalAlignment="Right" Width="21" Height="21" RenderTransformOrigin="0.476,1.048" Margin="0,2,0,5" BorderBrush="Black" Click="btnClose_Click"></Button>
                 </Grid>
-                
-                <TextBlock TextWrapping="Wrap" Margin="5" Foreground="White" x:Name="StreamList" Text="" FontSize="10"/>
+
+                <!--<TextBlock TextWrapping="Wrap" Margin="5" Foreground="White" x:Name="StreamList" Text="" FontSize="10"/>-->
+
+                <ListView Margin="2" Name="listDataBinding" Background="#FF2C2C2C" BorderBrush="{x:Null}">
+                    <ListView.ItemTemplate>
+                        <DataTemplate>
+                            <StackPanel>
+                                <WrapPanel>
+                                    <TextBlock Text="{Binding Channel.Name}" FontSize="12" FontWeight="Bold" Foreground="White" Margin="0,0,0,4" />
+                                    <TextBlock Text="• " Margin="5,0,0,0" Foreground="White" />
+                                    <TextBlock Text="{Binding Viewers}" FontSize="11" Foreground="White" Margin="0,2,0,0"/>
+                                </WrapPanel>
+                                <WrapPanel>
+                                    <TextBlock Text="playing " Foreground="White" />
+                                    <TextBlock Text="{Binding Game}" FontStyle="Italic" Foreground="White" />
+                                </WrapPanel>
+                                <TextBlock Text="" />
+                            </StackPanel>
+                        </DataTemplate>
+                    </ListView.ItemTemplate>
+                </ListView>
+
             </StackPanel>
         </Border>
 
         <!-- Animation -->
         <Grid.Triggers>
             <EventTrigger RoutedEvent="FrameworkElement.Loaded">
-                <BeginStoryboard>
-                    <Storyboard>
+                <BeginStoryboard x:Name="StoryBoard1">
+                    <Storyboard Completed="Storyboard_Completed">
                         <DoubleAnimationUsingKeyFrames Storyboard.TargetProperty="(UIElement.RenderTransform).(ScaleTransform.ScaleY)">
                             <SplineDoubleKeyFrame KeyTime="0:0:0" Value="0"/>
                             <SplineDoubleKeyFrame KeyTime="0:0:0.5" Value="1"/>

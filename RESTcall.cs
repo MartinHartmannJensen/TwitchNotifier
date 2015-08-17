@@ -43,23 +43,27 @@ namespace ArethruTwitchNotifier
 
         public static StreamsInfo GetLiveStreams()
         {
-            HttpClient client = new HttpClient();
-            client.BaseAddress = new Uri("https://api.twitch.tv/kraken/streams/followed");
-            client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
-            HttpResponseMessage response = client.GetAsync("?oauth_token=" + userToken).Result;
-
-            if (response.IsSuccessStatusCode)
+            try
             {
-                var data = JsonConvert.DeserializeObject<StreamsInfo>(response.Content.ReadAsStringAsync().Result);
-                data.isSucces = true;
+                HttpClient client = new HttpClient();
+                client.BaseAddress = new Uri("https://api.twitch.tv/kraken/streams/followed");
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                HttpResponseMessage response = client.GetAsync("?oauth_token=" + userToken).Result;
 
-                return data;
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = JsonConvert.DeserializeObject<StreamsInfo>(response.Content.ReadAsStringAsync().Result);
+                    data.isSucces = true;
+
+                    return data;
+                }
+                return new StreamsInfo() { isSucces = false };
             }
-
-            var failData = new StreamsInfo();
-            failData.isSucces = false;
-
-            return failData;
+            catch (System.ArgumentNullException)
+            {
+                
+            }
+            return new StreamsInfo() { isSucces = false };
         }
 
         public static void OpenBrowserAuthenticate()
