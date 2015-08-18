@@ -25,10 +25,10 @@
 
                 <!--<TextBlock TextWrapping="Wrap" Margin="5" Foreground="White" x:Name="StreamList" Text="" FontSize="10"/>-->
 
-                <ListView Margin="2" Name="listDataBinding" Background="#FF2C2C2C" BorderBrush="{x:Null}">
+                <ListView Margin="2" Name="listDataBinding" Background="#FF2C2C2C" BorderBrush="{x:Null}" SelectionMode="Single" SelectionChanged="listDataBinding_SelectionChanged" >
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel>
+                            <StackPanel Margin="0,0,0,12">
                                 <WrapPanel>
                                     <TextBlock Text="{Binding Channel.Name}" FontSize="12" FontWeight="Bold" Foreground="White" Margin="0,0,0,4" />
                                     <TextBlock Text="• " Margin="5,0,0,0" Foreground="White" />
@@ -38,7 +38,6 @@
                                     <TextBlock Text="playing " Foreground="White" />
                                     <TextBlock Text="{Binding Game}" FontStyle="Italic" Foreground="White" />
                                 </WrapPanel>
-                                <TextBlock Text="" />
                             </StackPanel>
                         </DataTemplate>
                     </ListView.ItemTemplate>

@@ -34,9 +34,12 @@ namespace ArethruTwitchNotifier
             notifyIcon1.BalloonTipText = "ArethruTwitchNotifier";
             notifyIcon1.Text = "ArethruTwitchNotifier";
             notifyIcon1.MouseDoubleClick += NotifyIcon1_Click;
-            notifyIcon1.ContextMenu  = new ContextMenu(new MenuItem[2] { new MenuItem("Show Live"), new MenuItem("Exit") });
-            notifyIcon1.ContextMenu.MenuItems[0].Click += btnXamlWindow_Click;
-            notifyIcon1.ContextMenu.MenuItems[1].Click += Form1_Close;
+            notifyIcon1.ContextMenu = new ContextMenu(new MenuItem[4] 
+            { new MenuItem("Sound", NotifyIcon1_Sound), new MenuItem("Refresh and Show", btnXamlWindow_Click), 
+                new MenuItem("Show", NotifyIcon1_Show), new MenuItem("Exit", Form1_Close) });
+            notifyIcon1.ContextMenu.MenuItems[0].Checked = Settings.Default.PlaySound;
+
+
 
             this.FormClosed += Form1_FormClosed;
             this.NotifyEvent += NotificationReceived;
@@ -54,7 +57,27 @@ namespace ArethruTwitchNotifier
             {
                 this.WindowState = FormWindowState.Minimized;
                 this.ShowInTaskbar = false;
+                this.Hide();
             }
+        }
+
+        private void NotifyIcon1_Show(object sender, EventArgs e)
+        {
+            DisplayNotification(streamInfo);
+        }
+
+        private void NotifyIcon1_Sound(object sender, EventArgs e)
+        {
+            var s = (MenuItem)sender;
+
+            if (!s.Checked)
+                s.Checked = true;
+            else
+                s.Checked = false;
+
+
+            Settings.Default.PlaySound = s.Checked;
+            Settings.Default.Save();
         }
 
         public void InvokeNotification(EventArgs e)

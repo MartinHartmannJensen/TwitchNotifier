@@ -25,6 +25,8 @@ namespace ArethruTwitchNotifier
         {
             InitializeComponent();
             SetPosition();
+
+            
         }
 
         public void SetPosition()
@@ -47,6 +49,17 @@ namespace ArethruTwitchNotifier
 
         private void Storyboard_Completed(object sender, EventArgs e)
         {
+            this.Close();
+        }
+
+        private void listDataBinding_SelectionChanged(object sender, SelectionChangedEventArgs e)
+        {
+            ListView listV = (ListView)sender;
+
+            var myItem = (StreamsObj)listV.Items[listV.SelectedIndex];
+            
+            System.Diagnostics.Process.Start("http://www.twitch.tv/" + myItem.Channel.Name);
+
             this.Close();
         }
 
