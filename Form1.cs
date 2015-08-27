@@ -20,7 +20,6 @@ namespace ArethruTwitchNotifier
         Thread nuT;
         FormSettings sForm;
         StreamsInfo streamInfo = null;
-        Thread notifyWindowThread;
 
         public Form1()
         {
@@ -33,13 +32,16 @@ namespace ArethruTwitchNotifier
             notifyIcon1.Icon = this.Icon;
             notifyIcon1.BalloonTipText = "ArethruTwitchNotifier";
             notifyIcon1.Text = "ArethruTwitchNotifier";
-            notifyIcon1.MouseDoubleClick += NotifyIcon1_Click;
+            notifyIcon1.MouseDoubleClick += NotifyIcon1_Show;
             notifyIcon1.ContextMenu = new ContextMenu(new MenuItem[4] 
-            { new MenuItem("Sound", NotifyIcon1_Sound), new MenuItem("Refresh and Show", btnXamlWindow_Click), 
-                new MenuItem("Show", NotifyIcon1_Show), new MenuItem("Exit", Form1_Close) });
-            notifyIcon1.ContextMenu.MenuItems[0].Checked = Settings.Default.PlaySound;
+            { 
+                new MenuItem("Refresh and Show", btnXamlWindow_Click), 
+                new MenuItem("Main Window", NotifyIcon1_OpenMainWindow), 
+                new MenuItem("Sound", NotifyIcon1_Sound), 
+                new MenuItem("Exit", Form1_Close) 
+            });
 
-
+            notifyIcon1.ContextMenu.MenuItems[2].Checked = Settings.Default.PlaySound;
 
             this.FormClosed += Form1_FormClosed;
             this.NotifyEvent += NotificationReceived;
@@ -48,8 +50,7 @@ namespace ArethruTwitchNotifier
 
             if (Settings.Default.RunAutoUpdateAtStart)
             {
-                MyThreading mtc = new MyThreading();
-                nuT = new Thread(mtc.ScheduledLivestreamUpdate);
+                nuT = new Thread(MyThreading.Instance.ScheduledLivestreamUpdate);
                 nuT.Start(this);
             }
 
@@ -63,7 +64,7 @@ namespace ArethruTwitchNotifier
 
         private void NotifyIcon1_Show(object sender, EventArgs e)
         {
-            DisplayNotification(streamInfo);
+            MyThreading.Instance.DisplayNotification(streamInfo);
         }
 
         private void NotifyIcon1_Sound(object sender, EventArgs e)
@@ -118,8 +119,8 @@ namespace ArethruTwitchNotifier
         private void btnXamlWindow_Click(object sender, EventArgs e)
         {
             streamInfo = RESTcall.GetLiveStreams();
-
-            DisplayNotification(streamInfo);
+            MyThreading.Instance.DisplayNotification(streamInfo);
+            //MyThreading.Instance.PlaySound("nSound.wav");
         }
 
         private void Form1_Resize(object sender, EventArgs e)
@@ -136,7 +137,7 @@ namespace ArethruTwitchNotifier
             }
         }
 
-        private void NotifyIcon1_Click(object sender, MouseEventArgs e)
+        private void NotifyIcon1_OpenMainWindow(object sender, EventArgs e)
         {
             this.Show();
             this.WindowState = FormWindowState.Normal;
@@ -163,6 +164,7 @@ namespace ArethruTwitchNotifier
 
             if (!tempSI.isSucces)
             {
+                streamInfo = tempSI;
                 richTextBox1.Text = "Something went wrong, check your connection and make sure that you have configured your User Token in Settings";
                 return;
             }
@@ -186,59 +188,13 @@ namespace ArethruTwitchNotifier
 
             streamInfo = tempSI;
             LiveStreamsSetText(tempSI);
-            DisplayNotification(tempSI);
 
-            if (Settings.Default.PlaySound)
-                PlaySound("nSound.wav");
+            MyThreading.Instance.DisplayNotification(tempSI);
+            MyThreading.Instance.PlaySound("nSound.wav");
         }
 
-        private void DisplayNotification(StreamsInfo sInfo)
-        {
-            if (notifyWindowThread != null && notifyWindowThread.IsAlive)
-                notifyWindowThread.Abort();
 
-            notifyWindowThread = new Thread(new ThreadStart(() => {
-                NotificationWindow w = new NotificationWindow();
-                w.ShowInTaskbar = false;
-                w.listDataBinding.ItemsSource = sInfo.Streams;
-                int windowseconds = Settings.Default.WindowTimeOnScreen;
-                w.WindowTimeOnScreen.KeyTime = new TimeSpan(0, 0, windowseconds);
-                w.WindowTimeOnScreen2.KeyTime = new TimeSpan(0, 0, windowseconds + 2);
-
-                w.Closed += (s, e) => 
-                    System.Windows.Threading.Dispatcher.CurrentDispatcher.BeginInvokeShutdown(System.Windows.Threading.DispatcherPriority.Background);
-
-                w.Show();
-
-                System.Windows.Threading.Dispatcher.Run();
-            
-            }));
-
-            notifyWindowThread.SetApartmentState(ApartmentState.STA);
-            notifyWindowThread.IsBackground = true;
-            notifyWindowThread.Start();
-        }
-
-        private void PlaySound(string name)
-        {
-            string soundName = name;
-
-            string soundPath = Environment.CurrentDirectory + @"\" + soundName;
-
-            try
-            {
-                System.Media.SoundPlayer player = new System.Media.SoundPlayer(soundPath);
-                player.Play();
-            }
-            catch (System.IO.FileNotFoundException)
-            {
-                System.Media.SystemSounds.Asterisk.Play();
-            }
-            catch (System.InvalidOperationException)
-            {
-                System.Media.SystemSounds.Asterisk.Play();
-            }
-        }
+        //Not event handling
 
         private void LiveStreamsSetText(StreamsInfo si)
         {

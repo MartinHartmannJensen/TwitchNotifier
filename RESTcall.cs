@@ -25,6 +25,8 @@ namespace ArethruTwitchNotifier
         static string scopes = "user_follows_edit";
         static string parameters = string.Format("{0}&client_id={1}&redirect_uri={2}&scope={3}", responseType, clientID, redirectURI, scopes);
 
+        public static string AuthURL { get { return authURL + parameters; } }
+
         public static string GetLiveStreamsFullString()
         {
             HttpClient client = new HttpClient();
@@ -38,7 +40,7 @@ namespace ArethruTwitchNotifier
                 return data.ToString();
             }
 
-            return "something went wrong cap'n          " + response.StatusCode.ToString();
+            return response.StatusCode.ToString();
         }
 
         public static StreamsInfo GetLiveStreams()
@@ -61,7 +63,18 @@ namespace ArethruTwitchNotifier
             }
             catch (System.ArgumentNullException)
             {
-                
+            }
+            catch (System.Net.WebException)
+            {
+            }
+            catch (System.Net.Http.HttpRequestException)
+            {
+            }
+            catch (System.Net.Sockets.SocketException)
+            {
+            }
+            catch (System.AggregateException)
+            {
             }
             return new StreamsInfo() { isSucces = false };
         }

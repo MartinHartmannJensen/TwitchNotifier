@@ -3,7 +3,7 @@
              xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
              xmlns:sys="clr-namespace:System;assembly=mscorlib"
              xmlns:d="clr-namespace:ArethruTwitchNotifier"
-             Title="Twitch Notification" WindowStyle="None"  Width="300" SizeToContent="Height" AllowsTransparency="True" Background="Transparent">
+             Title="Twitch Notification" WindowStyle="None" SizeToContent="WidthAndHeight" AllowsTransparency="True" Background="Transparent">
 
 
 
@@ -19,8 +19,14 @@
                         <ColumnDefinition Width="1*" />
                     </Grid.ColumnDefinitions>
 
-                    <TextBlock TextWrapping="Wrap" Margin="2,2,10,2" Foreground="White" TextDecorations="{x:Null}" FontSize="14"><Bold>Twitch Notification</Bold></TextBlock>
-                    <Button x:Name="btnClose" Content="X" Grid.Column="1" HorizontalAlignment="Right" Width="21" Height="21" RenderTransformOrigin="0.476,1.048" Margin="0,2,0,5" BorderBrush="Black" Click="btnClose_Click"></Button>
+                    <TextBlock Text="Twitch Notification" TextWrapping="Wrap" Margin="2,2,10,2" FontSize="14" FontWeight="Bold" Foreground="White" >
+                        <TextBlock.Effect>
+                            <DropShadowEffect Opacity="0.5" ShadowDepth="3"/>
+                        </TextBlock.Effect>
+                    </TextBlock>
+                    <Button x:Name="btnClose" Grid.Column="1" HorizontalAlignment="Right" Width="21" Height="21" RenderTransformOrigin="0.476,1.048" Margin="0,2,0,5" Click="btnClose_Click" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
+                        <TextBlock Margin="0,0,0,2" VerticalAlignment="Center" Foreground="White">x</TextBlock>
+                    </Button>
                 </Grid>
 
                 <!--<TextBlock TextWrapping="Wrap" Margin="5" Foreground="White" x:Name="StreamList" Text="" FontSize="10"/>-->
@@ -28,15 +34,16 @@
                 <ListView Margin="2" Name="listDataBinding" Background="#FF2C2C2C" BorderBrush="{x:Null}" SelectionMode="Single" SelectionChanged="listDataBinding_SelectionChanged" >
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <StackPanel Margin="0,0,0,12">
+                            <StackPanel Margin="0,0,0,7" ToolTip="{Binding Channel.Status}">
+                                <Separator Margin="3,2,3,7" />
                                 <WrapPanel>
                                     <TextBlock Text="{Binding Channel.Name}" FontSize="12" FontWeight="Bold" Foreground="White" Margin="0,0,0,4" />
                                     <TextBlock Text="• " Margin="5,0,0,0" Foreground="White" />
                                     <TextBlock Text="{Binding Viewers}" FontSize="11" Foreground="White" Margin="0,2,0,0"/>
                                 </WrapPanel>
                                 <WrapPanel>
-                                    <TextBlock Text="playing " Foreground="White" />
-                                    <TextBlock Text="{Binding Game}" FontStyle="Italic" Foreground="White" />
+                                    <TextBlock Text="playing " Foreground="White" FontSize="12" />
+                                    <TextBlock Text="{Binding Game}" FontStyle="Italic" Foreground="White" FontSize="12" />
                                 </WrapPanel>
                             </StackPanel>
                         </DataTemplate>

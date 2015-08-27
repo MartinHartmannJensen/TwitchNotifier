@@ -40,6 +40,9 @@ namespace ArethruTwitchNotifier
 
     public class StreamsObjChannel
     {
+        [JsonProperty("status")]
+        public string Status { get; set; }
+
         [JsonProperty("display_name")]
         public string Name { get; set; }
 

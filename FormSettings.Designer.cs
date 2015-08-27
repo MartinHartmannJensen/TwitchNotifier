@@ -43,13 +43,14 @@
             this.checkBox2 = new System.Windows.Forms.CheckBox();
             this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.checkBox4 = new System.Windows.Forms.CheckBox();
+            this.btn_OpenFile = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownUpFreq)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPopTime)).BeginInit();
             this.SuspendLayout();
             // 
             // btnAuth
             // 
-            this.btnAuth.Location = new System.Drawing.Point(282, 66);
+            this.btnAuth.Location = new System.Drawing.Point(282, 9);
             this.btnAuth.Name = "btnAuth";
             this.btnAuth.Size = new System.Drawing.Size(75, 23);
             this.btnAuth.TabIndex = 0;
@@ -60,9 +61,9 @@
             // label1
             // 
             this.label1.AutoSize = true;
-            this.label1.Location = new System.Drawing.Point(0, 5);
+            this.label1.Location = new System.Drawing.Point(9, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(371, 39);
+            this.label1.Size = new System.Drawing.Size(259, 78);
             this.label1.TabIndex = 1;
             this.label1.Text = resources.GetString("label1.Text");
             // 
@@ -203,18 +204,28 @@
             this.checkBox4.AutoSize = true;
             this.checkBox4.Location = new System.Drawing.Point(13, 337);
             this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(347, 30);
+            this.checkBox4.Size = new System.Drawing.Size(242, 30);
             this.checkBox4.TabIndex = 14;
-            this.checkBox4.Text = "Play sound on new notification. Will play any .wav soundfile named\r\nnSound. Just " +
-    "place it in the same folder as ArethruTwitchNotifier.exe\r\n";
+            this.checkBox4.Text = "Play sound on new notification. \r\nClick \"Assign\" to use your own .wav soundfile";
             this.checkBox4.UseVisualStyleBackColor = true;
             this.checkBox4.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
+            // 
+            // btn_OpenFile
+            // 
+            this.btn_OpenFile.Location = new System.Drawing.Point(282, 337);
+            this.btn_OpenFile.Name = "btn_OpenFile";
+            this.btn_OpenFile.Size = new System.Drawing.Size(75, 23);
+            this.btn_OpenFile.TabIndex = 15;
+            this.btn_OpenFile.Text = "Assign";
+            this.btn_OpenFile.UseVisualStyleBackColor = true;
+            this.btn_OpenFile.Click += new System.EventHandler(this.btn_OpenFile_Click);
             // 
             // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
             this.ClientSize = new System.Drawing.Size(372, 374);
+            this.Controls.Add(this.btn_OpenFile);
             this.Controls.Add(this.checkBox4);
             this.Controls.Add(this.checkBox3);
             this.Controls.Add(this.checkBox2);
@@ -235,7 +246,6 @@
             this.MinimizeBox = false;
             this.Name = "FormSettings";
             this.Text = "Settings";
-            this.TopMost = true;
             this.FormClosing += new System.Windows.Forms.FormClosingEventHandler(this.FormSettings_FormClosing);
             this.Load += new System.EventHandler(this.FormSettings_Load);
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownUpFreq)).EndInit();
@@ -261,5 +271,6 @@
         private System.Windows.Forms.CheckBox checkBox2;
         private System.Windows.Forms.CheckBox checkBox3;
         private System.Windows.Forms.CheckBox checkBox4;
+        private System.Windows.Forms.Button btn_OpenFile;
     }
 }

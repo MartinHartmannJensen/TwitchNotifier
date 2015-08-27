@@ -37,7 +37,7 @@ namespace ArethruTwitchNotifier {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("180")]
+        [global::System.Configuration.DefaultSettingValueAttribute("42")]
         public int UpdateFrequency {
             get {
                 return ((int)(this["UpdateFrequency"]));
@@ -49,7 +49,7 @@ namespace ArethruTwitchNotifier {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("30")]
+        [global::System.Configuration.DefaultSettingValueAttribute("1200")]
         public int WindowTimeOnScreen {
             get {
                 return ((int)(this["WindowTimeOnScreen"]));

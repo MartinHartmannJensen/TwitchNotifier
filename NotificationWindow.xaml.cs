@@ -44,6 +44,7 @@ namespace ArethruTwitchNotifier
 
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
+            MyThreading.Instance.StopSound();
             this.Close();
         }
 
