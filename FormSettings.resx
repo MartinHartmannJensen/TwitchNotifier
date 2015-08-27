@@ -119,11 +119,11 @@
   </resheader>
   <data name="label1.Text" xml:space="preserve">
     <value>User Token: Click Authorize to log in with your Twitch
-account and generate and apply your unique user 
-token.
-
-The empty field below can be used to manually 
-assign a token. This shouldn't be nescessary.
+account in your standard browser. Complete the 
+sequence and you should recieve your unique token
+here. Hit save, restart the app, and you are done. 
+(If you have trouble, try Deauthorize and remove 
+Arethru_TwitchNotifier, then authorize and wait a while)
 </value>
   </data>
   <assembly alias="System.Drawing" name="System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />

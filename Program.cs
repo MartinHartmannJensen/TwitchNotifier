@@ -42,7 +42,7 @@ namespace ArethruTwitchNotifier
         {
             var myForm = obj as Form1;
 
-            var seconds = Settings.Default.UpdateFrequency;
+            var seconds = Properties.Settings.Default.UpdateFrequency;
 
             while (true)
             {
@@ -65,7 +65,7 @@ namespace ArethruTwitchNotifier
                 NotificationWindow w = new NotificationWindow();
                 w.ShowInTaskbar = false;
                 w.listDataBinding.ItemsSource = sInfo.Streams;
-                int windowseconds = Settings.Default.WindowTimeOnScreen;
+                int windowseconds = Properties.Settings.Default.WindowTimeOnScreen;
                 w.WindowTimeOnScreen.KeyTime = new TimeSpan(0, 0, windowseconds);
                 w.WindowTimeOnScreen2.KeyTime = new TimeSpan(0, 0, windowseconds + 2);
 
@@ -85,7 +85,7 @@ namespace ArethruTwitchNotifier
 
         public void PlaySound(string name)
         {
-            if (Settings.Default.PlaySound)
+            if (Properties.Settings.Default.PlaySound)
             {
                 if (soundThread != null && soundThread.IsAlive)
                     soundThread.Abort();

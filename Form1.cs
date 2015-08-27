@@ -41,20 +41,20 @@ namespace ArethruTwitchNotifier
                 new MenuItem("Exit", Form1_Close) 
             });
 
-            notifyIcon1.ContextMenu.MenuItems[2].Checked = Settings.Default.PlaySound;
+            notifyIcon1.ContextMenu.MenuItems[2].Checked = Properties.Settings.Default.PlaySound;
 
             this.FormClosed += Form1_FormClosed;
             this.NotifyEvent += NotificationReceived;
 
             sForm = null;
 
-            if (Settings.Default.RunAutoUpdateAtStart)
+            if (Properties.Settings.Default.RunAutoUpdateAtStart)
             {
                 nuT = new Thread(MyThreading.Instance.ScheduledLivestreamUpdate);
                 nuT.Start(this);
             }
 
-            if (Settings.Default.StartMinimized)
+            if (Properties.Settings.Default.StartMinimized)
             {
                 this.WindowState = FormWindowState.Minimized;
                 this.ShowInTaskbar = false;
@@ -77,8 +77,8 @@ namespace ArethruTwitchNotifier
                 s.Checked = false;
 
 
-            Settings.Default.PlaySound = s.Checked;
-            Settings.Default.Save();
+            Properties.Settings.Default.PlaySound = s.Checked;
+            Properties.Settings.Default.Save();
         }
 
         public void InvokeNotification(EventArgs e)

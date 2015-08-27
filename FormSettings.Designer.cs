@@ -44,6 +44,9 @@
             this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.checkBox4 = new System.Windows.Forms.CheckBox();
             this.btn_OpenFile = new System.Windows.Forms.Button();
+            this.btn_ManualEdit = new System.Windows.Forms.Button();
+            this.btn_Deauth = new System.Windows.Forms.Button();
+            this.btn_Restart = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownUpFreq)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPopTime)).BeginInit();
             this.SuspendLayout();
@@ -63,7 +66,7 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(9, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(259, 78);
+            this.label1.Size = new System.Drawing.Size(267, 78);
             this.label1.TabIndex = 1;
             this.label1.Text = resources.GetString("label1.Text");
             // 
@@ -153,45 +156,46 @@
             this.label2.AutoSize = true;
             this.label2.Location = new System.Drawing.Point(0, 161);
             this.label2.Name = "label2";
-            this.label2.Size = new System.Drawing.Size(138, 13);
+            this.label2.Size = new System.Drawing.Size(148, 13);
             this.label2.TabIndex = 8;
-            this.label2.Text = "Network Update Frequency";
+            this.label2.Text = "Seconds between last update";
             // 
             // label3
             // 
             this.label3.AutoSize = true;
             this.label3.Location = new System.Drawing.Point(0, 208);
             this.label3.Name = "label3";
-            this.label3.Size = new System.Drawing.Size(145, 26);
+            this.label3.Size = new System.Drawing.Size(142, 26);
             this.label3.TabIndex = 9;
-            this.label3.Text = "Desktop Notification Window\r\non-screen time in seconds";
+            this.label3.Text = "How long the popup window\r\nshould stay up in seconds";
             // 
             // checkBox1
             // 
             this.checkBox1.AutoSize = true;
-            this.checkBox1.Location = new System.Drawing.Point(13, 267);
+            this.checkBox1.Location = new System.Drawing.Point(12, 267);
             this.checkBox1.Name = "checkBox1";
-            this.checkBox1.Size = new System.Drawing.Size(203, 17);
+            this.checkBox1.Size = new System.Drawing.Size(364, 17);
             this.checkBox1.TabIndex = 11;
-            this.checkBox1.Text = "Run automatic update timer at startup";
+            this.checkBox1.Text = "Run automatic update timer at startup (Always Yes, it\'s for dev. purpose)";
             this.checkBox1.UseVisualStyleBackColor = true;
             this.checkBox1.CheckedChanged += new System.EventHandler(this.checkBox1_CheckedChanged);
             // 
             // checkBox2
             // 
             this.checkBox2.AutoSize = true;
-            this.checkBox2.Location = new System.Drawing.Point(13, 290);
+            this.checkBox2.Location = new System.Drawing.Point(12, 290);
             this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(117, 17);
+            this.checkBox2.Size = new System.Drawing.Size(322, 30);
             this.checkBox2.TabIndex = 12;
-            this.checkBox2.Text = "Start with Windows";
+            this.checkBox2.Text = "Start with Windows (Works, but buggy. Try and edit default xml\r\nvalues if you hav" +
+    "e trouble)";
             this.checkBox2.UseVisualStyleBackColor = true;
             this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
             // 
             // checkBox3
             // 
             this.checkBox3.AutoSize = true;
-            this.checkBox3.Location = new System.Drawing.Point(13, 314);
+            this.checkBox3.Location = new System.Drawing.Point(12, 326);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(96, 17);
             this.checkBox3.TabIndex = 13;
@@ -202,29 +206,62 @@
             // checkBox4
             // 
             this.checkBox4.AutoSize = true;
-            this.checkBox4.Location = new System.Drawing.Point(13, 337);
+            this.checkBox4.Location = new System.Drawing.Point(12, 349);
             this.checkBox4.Name = "checkBox4";
-            this.checkBox4.Size = new System.Drawing.Size(242, 30);
+            this.checkBox4.Size = new System.Drawing.Size(245, 30);
             this.checkBox4.TabIndex = 14;
-            this.checkBox4.Text = "Play sound on new notification. \r\nClick \"Assign\" to use your own .wav soundfile";
+            this.checkBox4.Text = "Play sound on new notification. \r\nClick \"Sound!\" to use your own .wav soundfile";
             this.checkBox4.UseVisualStyleBackColor = true;
             this.checkBox4.CheckedChanged += new System.EventHandler(this.checkBox4_CheckedChanged);
             // 
             // btn_OpenFile
             // 
-            this.btn_OpenFile.Location = new System.Drawing.Point(282, 337);
+            this.btn_OpenFile.Location = new System.Drawing.Point(282, 352);
             this.btn_OpenFile.Name = "btn_OpenFile";
             this.btn_OpenFile.Size = new System.Drawing.Size(75, 23);
             this.btn_OpenFile.TabIndex = 15;
-            this.btn_OpenFile.Text = "Assign";
+            this.btn_OpenFile.Text = "Sound!";
             this.btn_OpenFile.UseVisualStyleBackColor = true;
             this.btn_OpenFile.Click += new System.EventHandler(this.btn_OpenFile_Click);
+            // 
+            // btn_ManualEdit
+            // 
+            this.btn_ManualEdit.Location = new System.Drawing.Point(13, 420);
+            this.btn_ManualEdit.Name = "btn_ManualEdit";
+            this.btn_ManualEdit.Size = new System.Drawing.Size(196, 23);
+            this.btn_ManualEdit.TabIndex = 16;
+            this.btn_ManualEdit.Text = "Edit default values (XML document)";
+            this.btn_ManualEdit.UseVisualStyleBackColor = true;
+            this.btn_ManualEdit.Click += new System.EventHandler(this.btn_ManualEdit_Click);
+            // 
+            // btn_Deauth
+            // 
+            this.btn_Deauth.Location = new System.Drawing.Point(282, 39);
+            this.btn_Deauth.Name = "btn_Deauth";
+            this.btn_Deauth.Size = new System.Drawing.Size(75, 23);
+            this.btn_Deauth.TabIndex = 17;
+            this.btn_Deauth.Text = "Deauthorize";
+            this.btn_Deauth.UseVisualStyleBackColor = true;
+            this.btn_Deauth.Click += new System.EventHandler(this.btn_Deauth_Click);
+            // 
+            // btn_Restart
+            // 
+            this.btn_Restart.Location = new System.Drawing.Point(215, 420);
+            this.btn_Restart.Name = "btn_Restart";
+            this.btn_Restart.Size = new System.Drawing.Size(142, 23);
+            this.btn_Restart.TabIndex = 18;
+            this.btn_Restart.Text = "Restart App";
+            this.btn_Restart.UseVisualStyleBackColor = true;
+            this.btn_Restart.Click += new System.EventHandler(this.btn_Restart_Click);
             // 
             // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(372, 374);
+            this.ClientSize = new System.Drawing.Size(372, 455);
+            this.Controls.Add(this.btn_Restart);
+            this.Controls.Add(this.btn_Deauth);
+            this.Controls.Add(this.btn_ManualEdit);
             this.Controls.Add(this.btn_OpenFile);
             this.Controls.Add(this.checkBox4);
             this.Controls.Add(this.checkBox3);
@@ -272,5 +309,8 @@
         private System.Windows.Forms.CheckBox checkBox3;
         private System.Windows.Forms.CheckBox checkBox4;
         private System.Windows.Forms.Button btn_OpenFile;
+        private System.Windows.Forms.Button btn_ManualEdit;
+        private System.Windows.Forms.Button btn_Deauth;
+        private System.Windows.Forms.Button btn_Restart;
     }
 }

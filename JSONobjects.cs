@@ -49,4 +49,10 @@ namespace ArethruTwitchNotifier
         [JsonProperty("url")]
         public string Url { get; set; }
     }
+
+    public class Token
+    {
+        [JsonProperty("access_token")]
+        public string Access_Token { get; set; }
+    }
 }
