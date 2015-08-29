@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Forms;
@@ -18,6 +19,8 @@ namespace ArethruTwitchNotifier
         }
     }
 
+    public delegate void MyNotificationEventHandler(object sender, EventArgs e);
+
     public class MyThreading
     {
         private static MyThreading instance = null;
@@ -32,27 +35,39 @@ namespace ArethruTwitchNotifier
             }
         }
 
+        public MyNotificationEventHandler NotifyEvent;
+
+        Thread updater;
         Thread windowThread;
         Thread soundThread;
         System.Media.SoundPlayer player;
 
         private MyThreading() { }
 
-        public void ScheduledLivestreamUpdate(object obj)
+        public void ScheduledLivestreamUpdate()
         {
-            var myForm = obj as Form1;
-
-            var seconds = Properties.Settings.Default.UpdateFrequency;
-
-            while (true)
+            updater = new Thread(new ThreadStart(() =>
             {
-                myForm.BeginInvoke((Action)(() =>
-                {
-                    myForm.InvokeNotification(EventArgs.Empty);
-                }));
+                var seconds = Properties.Settings.Default.UpdateFrequency;
 
-                Thread.Sleep(seconds * 1000);
-            }
+                Thread.Sleep(1000);
+
+                while (true)
+                {
+                    if (NotifyEvent != null)
+                        NotifyEvent(null, EventArgs.Empty);
+
+                    Thread.Sleep(seconds * 1000);
+                }
+            }));
+            updater.IsBackground = true;
+            updater.Start();
+        }
+
+        public void ShutDownScheduledLiveStreamUpdate()
+        {
+            if (updater != null && updater.IsAlive)
+                updater.Abort();
         }
 
         public void DisplayNotification(StreamsInfo sInfo)
@@ -120,6 +135,20 @@ namespace ArethruTwitchNotifier
         {
             if (player != null)
                 player.Stop();
+        }
+    }
+
+    public static class MiscOperation
+    {
+        public static void CreateBatRunFile()
+        {
+            if (!File.Exists(Environment.CurrentDirectory + @"\RunApplication.bat"))
+            {
+                using (StreamWriter sw = new StreamWriter("RunApplication.bat"))
+                {
+                    sw.Write(@"START /d " + '\u0022' + Environment.CurrentDirectory + '\u0022' + " ArethruTwitchNotifier.exe");
+                }
+            }
         }
     }
 }

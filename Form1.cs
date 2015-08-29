@@ -11,13 +11,10 @@ using System.Windows.Forms;
 
 namespace ArethruTwitchNotifier
 {
-    public delegate void MyNotificationEventHandler(object sender, EventArgs e);
-
     public partial class Form1 : Form
     {
-        public MyNotificationEventHandler NotifyEvent;
+        
         NotifyIcon notifyIcon1;
-        Thread nuT;
         FormSettings sForm;
         StreamsInfo streamInfo = null;
 
@@ -43,16 +40,9 @@ namespace ArethruTwitchNotifier
 
             notifyIcon1.ContextMenu.MenuItems[2].Checked = Properties.Settings.Default.PlaySound;
 
-            this.FormClosed += Form1_FormClosed;
-            this.NotifyEvent += NotificationReceived;
+            MyThreading.Instance.NotifyEvent += NotificationReceived;
 
             sForm = null;
-
-            if (Properties.Settings.Default.RunAutoUpdateAtStart)
-            {
-                nuT = new Thread(MyThreading.Instance.ScheduledLivestreamUpdate);
-                nuT.Start(this);
-            }
 
             if (Properties.Settings.Default.StartMinimized)
             {
@@ -60,6 +50,13 @@ namespace ArethruTwitchNotifier
                 this.ShowInTaskbar = false;
                 this.Hide();
             }
+
+            if (Properties.Settings.Default.RunAutoUpdateAtStart)
+            {
+                MyThreading.Instance.ScheduledLivestreamUpdate();
+            }
+
+            MiscOperation.CreateBatRunFile();
         }
 
         private void NotifyIcon1_Show(object sender, EventArgs e)
@@ -79,18 +76,6 @@ namespace ArethruTwitchNotifier
 
             Properties.Settings.Default.PlaySound = s.Checked;
             Properties.Settings.Default.Save();
-        }
-
-        public void InvokeNotification(EventArgs e)
-        {
-            if (NotifyEvent != null)
-                NotifyEvent(this, e);
-        }
-
-        void Form1_FormClosed(object sender, FormClosedEventArgs e)
-        {
-            if (nuT != null && nuT.IsAlive)
-                nuT.Abort();
         }
 
         void Form1_Close(object sender, EventArgs e)

@@ -9,6 +9,7 @@ using System.Threading.Tasks;
 using System.Windows.Forms;
 //using IWshRuntimeLibrary;
 using Microsoft.Win32;
+using System.Configuration;
 
 namespace ArethruTwitchNotifier
 {
@@ -19,40 +20,17 @@ namespace ArethruTwitchNotifier
             InitializeComponent();
         }
 
-        //Alternative method
-
-        //private void StartupShortcutHandling()
-        //{
-        //    string shortcutFilePath = Environment.GetFolderPath(Environment.SpecialFolder.Startup) + @"\ArethruTwitchNotifierShortcut.lnk";
-
-        //    if (Properties.Settings.Default.StartWithWindows)
-        //    {
-        //        if (!System.IO.File.Exists(shortcutFilePath))
-        //        {
-        //            object startupDir = (object)"Startup";
-        //            WshShell shell = new WshShell();
-        //            string shortcutAdr = (string)shell.SpecialFolders.Item(ref startupDir) + @"\ArethruTwitchNotifierShortcut.lnk";
-        //            IWshShortcut shortcut = (IWshShortcut)shell.CreateShortcut(shortcutAdr);
-        //            shortcut.Description = "twitch notification";
-        //            shortcut.TargetPath = Environment.CurrentDirectory + @"\ArethruTwitchNotifier.exe";
-        //            shortcut.Save();
-        //        }
-        //    }
-        //    else if (System.IO.File.Exists(shortcutFilePath))
-        //    {
-        //        System.IO.File.Delete(shortcutFilePath);
-        //    }
-        //}
-
         void SetRegistryStartup()
         {
+            MiscOperation.CreateBatRunFile();
+
             string name = "ArethruTwitchNotifier";
 
             RegistryKey rk = Registry.CurrentUser.OpenSubKey
             ("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
 
             if (checkBox2.Checked)
-                rk.SetValue(name, Application.ExecutablePath.ToString());
+                rk.SetValue(name, Environment.CurrentDirectory + @"\RunApplication.bat");
             else
                 rk.DeleteValue(name, false);
         }
@@ -101,8 +79,6 @@ namespace ArethruTwitchNotifier
         {
             Properties.Settings.Default.StartWithWindows = checkBox2.Checked;
             Properties.Settings.Default.Save();
-
-            //StartupShortcutHandling();
             SetRegistryStartup();
         }
 
@@ -148,11 +124,6 @@ namespace ArethruTwitchNotifier
             }
         }
 
-        private void btn_ManualEdit_Click(object sender, EventArgs e)
-        {
-            System.Diagnostics.Process.Start(Environment.CurrentDirectory + @"\ArethruTwitchNotifier.exe.config");
-        }
-
         private void btnAuth_Click(object sender, EventArgs e)
         {
             RESTcall.OpenBrowserAuthenticate();
@@ -170,6 +141,19 @@ namespace ArethruTwitchNotifier
         private void btn_Restart_Click(object sender, EventArgs e)
         {
             Application.Restart();
+        }
+
+        private void btn_AppLocation_Click(object sender, EventArgs e)
+        {
+            System.Diagnostics.Process.Start(Environment.CurrentDirectory);
+        }
+
+        private void btn_UserLocation_Click(object sender, EventArgs e)
+        {
+            string path = ConfigurationManager.OpenExeConfiguration(ConfigurationUserLevel.PerUserRoamingAndLocal).FilePath;
+            var trim = @"\user.exe.config";
+            string folder = path.TrimEnd(trim.ToCharArray());
+            System.Diagnostics.Process.Start(folder);
         }
     }
 }

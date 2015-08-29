@@ -44,9 +44,10 @@
             this.checkBox3 = new System.Windows.Forms.CheckBox();
             this.checkBox4 = new System.Windows.Forms.CheckBox();
             this.btn_OpenFile = new System.Windows.Forms.Button();
-            this.btn_ManualEdit = new System.Windows.Forms.Button();
+            this.btn_AppLocation = new System.Windows.Forms.Button();
             this.btn_Deauth = new System.Windows.Forms.Button();
             this.btn_Restart = new System.Windows.Forms.Button();
+            this.btn_UserLocation = new System.Windows.Forms.Button();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownUpFreq)).BeginInit();
             ((System.ComponentModel.ISupportInitialize)(this.numericUpDownPopTime)).BeginInit();
             this.SuspendLayout();
@@ -66,13 +67,13 @@
             this.label1.AutoSize = true;
             this.label1.Location = new System.Drawing.Point(9, 9);
             this.label1.Name = "label1";
-            this.label1.Size = new System.Drawing.Size(267, 78);
+            this.label1.Size = new System.Drawing.Size(269, 91);
             this.label1.TabIndex = 1;
             this.label1.Text = resources.GetString("label1.Text");
             // 
             // btnSetUserTok
             // 
-            this.btnSetUserTok.Location = new System.Drawing.Point(282, 95);
+            this.btnSetUserTok.Location = new System.Drawing.Point(282, 101);
             this.btnSetUserTok.Name = "btnSetUserTok";
             this.btnSetUserTok.Size = new System.Drawing.Size(75, 23);
             this.btnSetUserTok.TabIndex = 2;
@@ -102,7 +103,7 @@
             // 
             // textBoxUserTok
             // 
-            this.textBoxUserTok.Location = new System.Drawing.Point(12, 97);
+            this.textBoxUserTok.Location = new System.Drawing.Point(12, 103);
             this.textBoxUserTok.Name = "textBoxUserTok";
             this.textBoxUserTok.Size = new System.Drawing.Size(250, 20);
             this.textBoxUserTok.TabIndex = 5;
@@ -185,17 +186,16 @@
             this.checkBox2.AutoSize = true;
             this.checkBox2.Location = new System.Drawing.Point(12, 290);
             this.checkBox2.Name = "checkBox2";
-            this.checkBox2.Size = new System.Drawing.Size(322, 30);
+            this.checkBox2.Size = new System.Drawing.Size(117, 17);
             this.checkBox2.TabIndex = 12;
-            this.checkBox2.Text = "Start with Windows (Works, but buggy. Try and edit default xml\r\nvalues if you hav" +
-    "e trouble)";
+            this.checkBox2.Text = "Start with Windows";
             this.checkBox2.UseVisualStyleBackColor = true;
             this.checkBox2.CheckedChanged += new System.EventHandler(this.checkBox2_CheckedChanged);
             // 
             // checkBox3
             // 
             this.checkBox3.AutoSize = true;
-            this.checkBox3.Location = new System.Drawing.Point(12, 326);
+            this.checkBox3.Location = new System.Drawing.Point(12, 313);
             this.checkBox3.Name = "checkBox3";
             this.checkBox3.Size = new System.Drawing.Size(96, 17);
             this.checkBox3.TabIndex = 13;
@@ -206,7 +206,7 @@
             // checkBox4
             // 
             this.checkBox4.AutoSize = true;
-            this.checkBox4.Location = new System.Drawing.Point(12, 349);
+            this.checkBox4.Location = new System.Drawing.Point(12, 336);
             this.checkBox4.Name = "checkBox4";
             this.checkBox4.Size = new System.Drawing.Size(245, 30);
             this.checkBox4.TabIndex = 14;
@@ -216,7 +216,7 @@
             // 
             // btn_OpenFile
             // 
-            this.btn_OpenFile.Location = new System.Drawing.Point(282, 352);
+            this.btn_OpenFile.Location = new System.Drawing.Point(282, 339);
             this.btn_OpenFile.Name = "btn_OpenFile";
             this.btn_OpenFile.Size = new System.Drawing.Size(75, 23);
             this.btn_OpenFile.TabIndex = 15;
@@ -224,15 +224,15 @@
             this.btn_OpenFile.UseVisualStyleBackColor = true;
             this.btn_OpenFile.Click += new System.EventHandler(this.btn_OpenFile_Click);
             // 
-            // btn_ManualEdit
+            // btn_AppLocation
             // 
-            this.btn_ManualEdit.Location = new System.Drawing.Point(13, 420);
-            this.btn_ManualEdit.Name = "btn_ManualEdit";
-            this.btn_ManualEdit.Size = new System.Drawing.Size(196, 23);
-            this.btn_ManualEdit.TabIndex = 16;
-            this.btn_ManualEdit.Text = "Edit default values (XML document)";
-            this.btn_ManualEdit.UseVisualStyleBackColor = true;
-            this.btn_ManualEdit.Click += new System.EventHandler(this.btn_ManualEdit_Click);
+            this.btn_AppLocation.Location = new System.Drawing.Point(112, 391);
+            this.btn_AppLocation.Name = "btn_AppLocation";
+            this.btn_AppLocation.Size = new System.Drawing.Size(117, 23);
+            this.btn_AppLocation.TabIndex = 16;
+            this.btn_AppLocation.Text = "Application Location";
+            this.btn_AppLocation.UseVisualStyleBackColor = true;
+            this.btn_AppLocation.Click += new System.EventHandler(this.btn_AppLocation_Click);
             // 
             // btn_Deauth
             // 
@@ -246,22 +246,34 @@
             // 
             // btn_Restart
             // 
-            this.btn_Restart.Location = new System.Drawing.Point(215, 420);
+            this.btn_Restart.Location = new System.Drawing.Point(12, 391);
             this.btn_Restart.Name = "btn_Restart";
-            this.btn_Restart.Size = new System.Drawing.Size(142, 23);
+            this.btn_Restart.Size = new System.Drawing.Size(94, 23);
             this.btn_Restart.TabIndex = 18;
             this.btn_Restart.Text = "Restart App";
             this.btn_Restart.UseVisualStyleBackColor = true;
             this.btn_Restart.Click += new System.EventHandler(this.btn_Restart_Click);
             // 
+            // btn_UserLocation
+            // 
+            this.btn_UserLocation.Location = new System.Drawing.Point(235, 391);
+            this.btn_UserLocation.Name = "btn_UserLocation";
+            this.btn_UserLocation.RightToLeft = System.Windows.Forms.RightToLeft.No;
+            this.btn_UserLocation.Size = new System.Drawing.Size(122, 23);
+            this.btn_UserLocation.TabIndex = 19;
+            this.btn_UserLocation.Text = "User Settings Location";
+            this.btn_UserLocation.UseVisualStyleBackColor = true;
+            this.btn_UserLocation.Click += new System.EventHandler(this.btn_UserLocation_Click);
+            // 
             // FormSettings
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(372, 455);
+            this.ClientSize = new System.Drawing.Size(372, 422);
+            this.Controls.Add(this.btn_UserLocation);
             this.Controls.Add(this.btn_Restart);
             this.Controls.Add(this.btn_Deauth);
-            this.Controls.Add(this.btn_ManualEdit);
+            this.Controls.Add(this.btn_AppLocation);
             this.Controls.Add(this.btn_OpenFile);
             this.Controls.Add(this.checkBox4);
             this.Controls.Add(this.checkBox3);
@@ -309,8 +321,9 @@
         private System.Windows.Forms.CheckBox checkBox3;
         private System.Windows.Forms.CheckBox checkBox4;
         private System.Windows.Forms.Button btn_OpenFile;
-        private System.Windows.Forms.Button btn_ManualEdit;
+        private System.Windows.Forms.Button btn_AppLocation;
         private System.Windows.Forms.Button btn_Deauth;
         private System.Windows.Forms.Button btn_Restart;
+        private System.Windows.Forms.Button btn_UserLocation;
     }
 }

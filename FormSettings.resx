@@ -119,9 +119,10 @@
   </resheader>
   <data name="label1.Text" xml:space="preserve">
     <value>User Token: Click Authorize to log in with your Twitch
-account in your standard browser. Complete the 
-sequence and you should recieve your unique token
-here. Hit save, restart the app, and you are done. 
+account in your preferred browser. Complete the login, 
+close your browser, and you should recieve your unique
+token in the box below. 
+Hit save, restart the app, and you are done. 
 (If you have trouble, try Deauthorize and remove 
 Arethru_TwitchNotifier, then authorize and wait a while)
 </value>
