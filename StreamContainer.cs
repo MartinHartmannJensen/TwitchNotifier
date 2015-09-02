@@ -44,7 +44,7 @@ namespace ArethruTwitchNotifier
 
             if (tempSI.isSucces)
             {
-                CompareInfo(tempSI);
+                CurrentInfo = tempSI;
             }
         }
 
@@ -52,7 +52,7 @@ namespace ArethruTwitchNotifier
         /// Updates currentInfo with the passed parameter variable
         /// </summary>
         /// <param name="si"></param>
-        public void UpdateInfo(StreamsInfo si)
+        public void UpdateAndCompare(StreamsInfo si)
         {
             var tempSI = si;
 

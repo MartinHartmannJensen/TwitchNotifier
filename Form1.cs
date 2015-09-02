@@ -16,7 +16,6 @@ namespace ArethruTwitchNotifier
         
         NotifyIcon notifyIcon1;
         FormSettings sForm;
-        StreamsInfo streamInfo = null;
 
         public Form1()
         {
@@ -40,7 +39,6 @@ namespace ArethruTwitchNotifier
 
             notifyIcon1.ContextMenu.MenuItems[2].Checked = MHJ_ConfigManager.Settings.I.PlaySound;
 
-            MyThreading.Instance.NotifyEvent += NotificationReceived;
             StreamContainer.Instance.FoundNewStreamEvent += StreamContainer_NewStreamFound;
 
             sForm = null;
@@ -62,7 +60,7 @@ namespace ArethruTwitchNotifier
 
         private void NotifyIcon1_Show(object sender, EventArgs e)
         {
-            MyThreading.Instance.DisplayNotification(streamInfo);
+            MyThreading.Instance.DisplayNotification(StreamContainer.Instance.CurrentInfo);
         }
 
         private void NotifyIcon1_Sound(object sender, EventArgs e)
@@ -87,9 +85,9 @@ namespace ArethruTwitchNotifier
 
         private void btnRefresh_Click(object sender, EventArgs e)
         {
-            streamInfo = RESTcall.GetLiveStreams();
+            StreamContainer.Instance.UpdateInfo();
 
-            LiveStreamsSetText(streamInfo);
+            LiveStreamsSetText(StreamContainer.Instance.CurrentInfo);
         }
 
         private void Clear_Click(object sender, EventArgs e)
@@ -105,9 +103,8 @@ namespace ArethruTwitchNotifier
 
         private void btnXamlWindow_Click(object sender, EventArgs e)
         {
-            streamInfo = RESTcall.GetLiveStreams();
-            MyThreading.Instance.DisplayNotification(streamInfo);
-            //MyThreading.Instance.PlaySound("nSound.wav");
+            StreamContainer.Instance.UpdateInfo();
+            MyThreading.Instance.DisplayNotification(StreamContainer.Instance.CurrentInfo);
         }
 
         private void Form1_Resize(object sender, EventArgs e)
@@ -145,40 +142,40 @@ namespace ArethruTwitchNotifier
             sForm.Show();
         }
 
-        private void NotificationReceived(object sender, EventArgs e)
-        {
-            var tempSI = RESTcall.GetLiveStreams();
+        //private void NotificationReceived(object sender, EventArgs e)
+        //{
+        //    var tempSI = RESTcall.GetLiveStreams();
 
-            if (!tempSI.isSucces)
-            {
-                streamInfo = tempSI;
-                richTextBox1.Text = "Something went wrong, check your connection and make sure that you have configured your User Token in Settings";
-                return;
-            }
+        //    if (!tempSI.isSucces)
+        //    {
+        //        streamInfo = tempSI;
+        //        richTextBox1.Text = "Something went wrong, check your connection and make sure that you have configured your User Token in Settings";
+        //        return;
+        //    }
 
-            if (streamInfo != null)
-            {
-                bool newChannelFound = false;
-                foreach (var item in tempSI.Streams)
-                {
-                    if (!streamInfo.Streams.Exists(x => x.Channel.Name.Equals(item.Channel.Name)))
-                        newChannelFound = true;
-                }
+        //    if (streamInfo != null)
+        //    {
+        //        bool newChannelFound = false;
+        //        foreach (var item in tempSI.Streams)
+        //        {
+        //            if (!streamInfo.Streams.Exists(x => x.Channel.Name.Equals(item.Channel.Name)))
+        //                newChannelFound = true;
+        //        }
 
-                if (!newChannelFound)
-                {
-                    streamInfo = tempSI;
-                    LiveStreamsSetText(tempSI);
-                    return;
-                }
-            }
+        //        if (!newChannelFound)
+        //        {
+        //            streamInfo = tempSI;
+        //            LiveStreamsSetText(tempSI);
+        //            return;
+        //        }
+        //    }
 
-            streamInfo = tempSI;
-            LiveStreamsSetText(tempSI);
+        //    streamInfo = tempSI;
+        //    LiveStreamsSetText(tempSI);
 
-            MyThreading.Instance.DisplayNotification(tempSI);
-            MyThreading.Instance.PlaySound("nSound.wav");
-        }
+        //    MyThreading.Instance.DisplayNotification(tempSI);
+        //    MyThreading.Instance.PlaySound("nSound.wav");
+        //}
 
         private void StreamContainer_NewStreamFound(StreamsInfo si)
         {

@@ -62,7 +62,7 @@ namespace ArethruTwitchNotifier
                     //    NotifyEvent(null, EventArgs.Empty);
 
                     var yup = RESTcall.GetLiveStreams();
-                    StreamContainer.Instance.UpdateInfo(yup);
+                    StreamContainer.Instance.UpdateAndCompare(yup);
 
                     Thread.Sleep(seconds * 1000);
                 }
