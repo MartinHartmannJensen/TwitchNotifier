@@ -13,20 +13,25 @@
         <!-- Design-->
         <Border BorderThickness="1" Background="#FF2C2C2C"  BorderBrush="Black" CornerRadius="2">
             <StackPanel Margin="5">
-                <Grid Height="28">
+                <Grid Height="Auto" Width="Auto">
                     <Grid.ColumnDefinitions>
-                        <ColumnDefinition Width="1*" />
-                        <ColumnDefinition Width="1*" />
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition />
                     </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                        <RowDefinition Height="Auto"></RowDefinition>
+                    </Grid.RowDefinitions>
 
-                    <TextBlock Text="Twitch Notification" TextWrapping="Wrap" Margin="2,2,10,2" FontSize="14" FontWeight="Bold" Foreground="White" >
+                    <TextBlock Text="Twitch Notification" Grid.Column="0" Grid.Row="0" Margin="2,2,10,2" FontSize="14" FontWeight="Bold" Foreground="White" >
                         <TextBlock.Effect>
                             <DropShadowEffect Opacity="0.5" ShadowDepth="3"/>
                         </TextBlock.Effect>
                     </TextBlock>
-                    <Button x:Name="btnClose" Grid.Column="1" HorizontalAlignment="Right" Width="21" Height="21" RenderTransformOrigin="0.476,1.048" Margin="0,2,0,5" Click="btnClose_Click" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}">
-                        <TextBlock Margin="0,0,0,2" VerticalAlignment="Center" Foreground="White">x</TextBlock>
+                    <Button x:Name="btnClose" Grid.Column="1" Grid.Row="0" HorizontalAlignment="Right" RenderTransformOrigin="0.476,1.048" Margin="0,2,0,5" Click="btnClose_Click" Background="{x:Null}" BorderBrush="{x:Null}" Foreground="{x:Null}" Height="19" Width="19">
+                        <TextBlock VerticalAlignment="Center" Foreground="White" Height="19" Width="6" Margin="1.3,0,0,0">x</TextBlock>
                     </Button>
+                    <TextBlock Name="TextTime" Text="received at" Grid.Column="0" Grid.Row="1" Margin="7,-4,2,2" Foreground="White" FontSize="9"></TextBlock>
                 </Grid>
 
                 <!--<TextBlock TextWrapping="Wrap" Margin="5" Foreground="White" x:Name="StreamList" Text="" FontSize="10"/>-->

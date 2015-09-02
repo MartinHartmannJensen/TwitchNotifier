@@ -25,8 +25,8 @@ namespace ArethruTwitchNotifier
         {
             InitializeComponent();
             SetPosition();
-
-            
+            this.TextTime.Text = "recieved at " + StreamContainer.Instance.TimeRecieved.ToShortTimeString();
+            btnClose.Effect = null;
         }
 
         public void SetPosition()

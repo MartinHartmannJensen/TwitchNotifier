@@ -17,7 +17,8 @@ namespace ArethruTwitchNotifier
     {
         //Appspecific and usersensitive data
         static string clientID = MyClientIDfile.clientID; //Just replace this with your Twitch Client ID given to you
-        static string userToken = Properties.Settings.Default.UserToken;
+        //static string userToken = Properties.Settings.Default.UserToken;
+        static string userToken = MHJ_ConfigManager.Settings.I.UserToken;
 
         //'authURL + parameters' creates the full url for authorizing a user profile for the clientID
         static string authURL = "https://api.twitch.tv/kraken/oauth2/authorize";
@@ -78,7 +79,7 @@ namespace ArethruTwitchNotifier
 
                     return data;
                 }
-                return new StreamsInfo() { isSucces = false };
+                return new StreamsInfo() { isSucces = false, Streams = new List<StreamsObj>() { new StreamsObj() { Game = "Network trouble, no exceptions caught" } } };
             }
             catch (System.ArgumentNullException)
             {
@@ -105,6 +106,7 @@ namespace ArethruTwitchNotifier
 
         public static string ListenForResponse()
         {
+            //TODO should really be done in it's own thread, as to not block the main while listening
             //Listen for redirect
             HttpListener listen = new HttpListener();
             listen.Prefixes.Add(redirectURI + @"/");

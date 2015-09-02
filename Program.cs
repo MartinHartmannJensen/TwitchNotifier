@@ -44,18 +44,25 @@ namespace ArethruTwitchNotifier
 
         private MyThreading() { }
 
-        public void ScheduledLivestreamUpdate()
+        public void StartStreamContainerUpdater()
         {
+            if (updater != null && updater.IsAlive)
+                updater.Abort();
+
             updater = new Thread(new ThreadStart(() =>
             {
-                var seconds = Properties.Settings.Default.UpdateFrequency;
+                //var seconds = Properties.Settings.Default.UpdateFrequency;
+                var seconds = MHJ_ConfigManager.Settings.I.UpdateFrequency;
 
                 Thread.Sleep(1000);
 
                 while (true)
                 {
-                    if (NotifyEvent != null)
-                        NotifyEvent(null, EventArgs.Empty);
+                    //if (NotifyEvent != null)
+                    //    NotifyEvent(null, EventArgs.Empty);
+
+                    var yup = RESTcall.GetLiveStreams();
+                    StreamContainer.Instance.UpdateInfo(yup);
 
                     Thread.Sleep(seconds * 1000);
                 }
@@ -64,7 +71,7 @@ namespace ArethruTwitchNotifier
             updater.Start();
         }
 
-        public void ShutDownScheduledLiveStreamUpdate()
+        public void StopStreamContainerUpdater()
         {
             if (updater != null && updater.IsAlive)
                 updater.Abort();
@@ -80,7 +87,8 @@ namespace ArethruTwitchNotifier
                 NotificationWindow w = new NotificationWindow();
                 w.ShowInTaskbar = false;
                 w.listDataBinding.ItemsSource = sInfo.Streams;
-                int windowseconds = Properties.Settings.Default.WindowTimeOnScreen;
+                //int windowseconds = Properties.Settings.Default.WindowTimeOnScreen;
+                int windowseconds = MHJ_ConfigManager.Settings.I.WindowTimeOnScreen;
                 w.WindowTimeOnScreen.KeyTime = new TimeSpan(0, 0, windowseconds);
                 w.WindowTimeOnScreen2.KeyTime = new TimeSpan(0, 0, windowseconds + 2);
 
@@ -100,7 +108,8 @@ namespace ArethruTwitchNotifier
 
         public void PlaySound(string name)
         {
-            if (Properties.Settings.Default.PlaySound)
+            //if (Properties.Settings.Default.PlaySound)
+            if (MHJ_ConfigManager.Settings.I.PlaySound)
             {
                 if (soundThread != null && soundThread.IsAlive)
                     soundThread.Abort();
@@ -151,4 +160,6 @@ namespace ArethruTwitchNotifier
             }
         }
     }
+
+    
 }

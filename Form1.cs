@@ -38,22 +38,23 @@ namespace ArethruTwitchNotifier
                 new MenuItem("Exit", Form1_Close) 
             });
 
-            notifyIcon1.ContextMenu.MenuItems[2].Checked = Properties.Settings.Default.PlaySound;
+            notifyIcon1.ContextMenu.MenuItems[2].Checked = MHJ_ConfigManager.Settings.I.PlaySound;
 
             MyThreading.Instance.NotifyEvent += NotificationReceived;
+            StreamContainer.Instance.FoundNewStreamEvent += StreamContainer_NewStreamFound;
 
             sForm = null;
 
-            if (Properties.Settings.Default.StartMinimized)
+            if (MHJ_ConfigManager.Settings.I.StartMinimized)
             {
                 this.WindowState = FormWindowState.Minimized;
                 this.ShowInTaskbar = false;
                 this.Hide();
             }
 
-            if (Properties.Settings.Default.RunAutoUpdateAtStart)
+            if (MHJ_ConfigManager.Settings.I.RunAutoUpdateAtStart)
             {
-                MyThreading.Instance.ScheduledLivestreamUpdate();
+                MyThreading.Instance.StartStreamContainerUpdater();
             }
 
             MiscOperation.CreateBatRunFile();
@@ -74,8 +75,9 @@ namespace ArethruTwitchNotifier
                 s.Checked = false;
 
 
-            Properties.Settings.Default.PlaySound = s.Checked;
-            Properties.Settings.Default.Save();
+            //Properties.Settings.Default.PlaySound = s.Checked;
+            //Properties.Settings.Default.Save();
+            MHJ_ConfigManager.Settings.I.PlaySound = s.Checked;
         }
 
         void Form1_Close(object sender, EventArgs e)
@@ -178,6 +180,13 @@ namespace ArethruTwitchNotifier
             MyThreading.Instance.PlaySound("nSound.wav");
         }
 
+        private void StreamContainer_NewStreamFound(StreamsInfo si)
+        {
+            LiveStreamsSetText(si);
+            MyThreading.Instance.DisplayNotification(si);
+            MyThreading.Instance.PlaySound("nSound.wav");
+        }
+
 
         //Not event handling
 
@@ -188,6 +197,7 @@ namespace ArethruTwitchNotifier
             foreach (var item in si.Streams)
             {
                 sb.AppendLine(item.Channel.Name);
+                sb.AppendLine(item.Channel.Status);
                 sb.AppendLine("Viewers: " + item.Viewers);
                 sb.AppendLine(item.Game);
                 sb.AppendLine(item.Channel.Url);

@@ -226,7 +226,7 @@
             // 
             // btn_AppLocation
             // 
-            this.btn_AppLocation.Location = new System.Drawing.Point(112, 391);
+            this.btn_AppLocation.Location = new System.Drawing.Point(126, 391);
             this.btn_AppLocation.Name = "btn_AppLocation";
             this.btn_AppLocation.Size = new System.Drawing.Size(117, 23);
             this.btn_AppLocation.TabIndex = 16;
@@ -246,9 +246,9 @@
             // 
             // btn_Restart
             // 
-            this.btn_Restart.Location = new System.Drawing.Point(12, 391);
+            this.btn_Restart.Location = new System.Drawing.Point(3, 391);
             this.btn_Restart.Name = "btn_Restart";
-            this.btn_Restart.Size = new System.Drawing.Size(94, 23);
+            this.btn_Restart.Size = new System.Drawing.Size(117, 23);
             this.btn_Restart.TabIndex = 18;
             this.btn_Restart.Text = "Restart App";
             this.btn_Restart.UseVisualStyleBackColor = true;
@@ -256,12 +256,12 @@
             // 
             // btn_UserLocation
             // 
-            this.btn_UserLocation.Location = new System.Drawing.Point(235, 391);
+            this.btn_UserLocation.Location = new System.Drawing.Point(249, 391);
             this.btn_UserLocation.Name = "btn_UserLocation";
             this.btn_UserLocation.RightToLeft = System.Windows.Forms.RightToLeft.No;
-            this.btn_UserLocation.Size = new System.Drawing.Size(122, 23);
+            this.btn_UserLocation.Size = new System.Drawing.Size(117, 23);
             this.btn_UserLocation.TabIndex = 19;
-            this.btn_UserLocation.Text = "User Settings Location";
+            this.btn_UserLocation.Text = "Direct Config Edit";
             this.btn_UserLocation.UseVisualStyleBackColor = true;
             this.btn_UserLocation.Click += new System.EventHandler(this.btn_UserLocation_Click);
             // 
@@ -269,7 +269,7 @@
             // 
             this.AutoScaleDimensions = new System.Drawing.SizeF(6F, 13F);
             this.AutoScaleMode = System.Windows.Forms.AutoScaleMode.Font;
-            this.ClientSize = new System.Drawing.Size(372, 422);
+            this.ClientSize = new System.Drawing.Size(371, 425);
             this.Controls.Add(this.btn_UserLocation);
             this.Controls.Add(this.btn_Restart);
             this.Controls.Add(this.btn_Deauth);
