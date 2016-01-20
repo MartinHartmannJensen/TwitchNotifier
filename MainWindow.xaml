@@ -1,0 +1,166 @@
+﻿<Window x:Class="ArethruNotifier.MainWindow"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:ArethruNotifier"
+        mc:Ignorable="d"
+        Title="Arethru Notifier" Height="477" Width="660" StateChanged="Window_StateChanged">
+
+    <Grid Background="{DynamicResource Color_Panel1}">
+        <!--NavBar-->
+        <Border Style="{StaticResource NavbarBorder}">
+            <WrapPanel x:Name="HeaderPanel">
+                <WrapPanel>
+                    <TextBlock x:Name="btn_Follows" Text="Follows" MouseDown="Navbar_Click" />
+                </WrapPanel>
+                <WrapPanel>
+                    <TextBlock x:Name="btn_Settings" Text="Settings" Foreground="{DynamicResource Color_ActivePurple}" MouseDown="Navbar_Click" />
+                </WrapPanel>
+            </WrapPanel>
+        </Border>
+        <!--/NavBar-->
+
+        <!-- Content -->
+        <Grid Margin="0,40,0,0">
+            <!--Follows-->
+            <Grid x:Name="FollowPanel" Visibility="Hidden">
+                <ScrollViewer>
+                    <StackPanel>
+                        <ItemsControl x:Name="FollowsList" HorizontalContentAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Style="{DynamicResource FollowTemplate}">
+                                        <DockPanel>
+                                            <Image Source="{Binding Channel.Logo}" />
+                                            <TextBlock Text="{Binding Channel.Name}" ToolTip="{Binding Channel.Name}" Background="{x:Null}" 
+                                                       Foreground="{DynamicResource Color_DefaultText}" HorizontalAlignment="Left" 
+                                                       VerticalAlignment="Center" Margin="5,0,0,0" MaxWidth="100" MinWidth="10" />
+                                            <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right">
+                                                <TextBlock Text="Live!" Foreground="{DynamicResource Color_Highlight}" />
+                                                <TextBlock Text="Profile" ToolTip="{Binding Channel.Url_Profile}" MouseDown="Hyperlink_Click" Cursor="Hand" TextDecorations="Underline" />
+                                            </StackPanel>
+                                        </DockPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+
+                        <ItemsControl x:Name="FollowsList2" HorizontalContentAlignment="Stretch">
+                            <ItemsControl.ItemsPanel>
+                                <ItemsPanelTemplate>
+                                    <WrapPanel />
+                                </ItemsPanelTemplate>
+                            </ItemsControl.ItemsPanel>
+
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Style="{DynamicResource FollowTemplate}">
+                                        <DockPanel>
+                                            <Image Source="{Binding Channel.Logo}" />
+                                            <TextBlock Text="{Binding Channel.Name}" ToolTip="{Binding Channel.Name}" Background="{x:Null}" 
+                                                       Foreground="{DynamicResource Color_DefaultText}" HorizontalAlignment="Left" VerticalAlignment="Center" 
+                                                       Margin="5,0,0,0" MaxWidth="100" MinWidth="10" />
+                                            <TextBlock Text="Profile" ToolTip="{Binding Channel.Url_Profile}" MouseDown="Hyperlink_Click" DockPanel.Dock="Right" HorizontalAlignment="Right" Cursor="Hand" TextDecorations="Underline" />
+                                        </DockPanel>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </ScrollViewer>
+            </Grid>
+            <!--/Follows-->
+
+            <!--Settings-->
+            <StackPanel x:Name="SettingsPanel" Style="{DynamicResource SettingsPanel}" Visibility="Visible" HorizontalAlignment="Stretch">
+                <WrapPanel>
+                    <Button x:Name="btnAuth" Content="Authorize" Style="{StaticResource DefaultButton}" Click="btnAuth_Click" />
+                    <Button x:Name="btnDeAuth" Style="{DynamicResource DefaultButton}" Content="Deauthorize" Click="btnDeAuth_Click" />
+                </WrapPanel>
+                <Separator Margin="0,9" Width="200" />
+                <!--<WrapPanel Visibility="Collapsed">
+                    <TextBlock Style="{StaticResource StandardText}" Text="User Token" />
+                    <TextBox x:Name="inputUsertoken" Width="200" />
+                    <Button x:Name="btnTokSave" Style="{DynamicResource DefaultButton}" Content="Save" Click="btnTokSave_Click" />
+                </WrapPanel>-->
+                <WrapPanel>
+                    <TextBlock Style="{StaticResource StandardText}" Text="Update Frequency"
+                               ToolTip="This is how often in seconds, that the application should contact the twitch servers &#10;to check for updates." />
+                    <TextBox x:Name="boxUpdFreq" Width="38" PreviewTextInput="PreviewInputBoxNumbers" KeyDown="boxUpdFreq_KeyDown" />
+                </WrapPanel>
+                <WrapPanel>
+                    <TextBlock Style="{StaticResource StandardText}" Text="Notification Display Time"
+                               ToolTip="This is how long in seconds, the popup/notification window should stay up before automatically closing down."/>
+                    <TextBox x:Name="boxPopTime" Width="38" PreviewTextInput="PreviewInputBoxNumbers" KeyDown="boxPopTime_KeyDown" />
+                </WrapPanel>
+                <WrapPanel>
+                    <TextBlock Style="{StaticResource StandardText}" Text="Offline Mode" 
+                               ToolTip="For testing. Restart required upon change. This disables the timer that periodically contacts the twitch servers." />
+                    <CheckBox x:Name="chkUpd" Margin="0,3,0,0" Click="chkUpd_Checked" />
+                </WrapPanel>
+                <WrapPanel>
+                    <TextBlock Style="{StaticResource StandardText}" Text="Start with Windows"
+                               ToolTip="Adds a key/value pair to the windows registry startup run folder"/>
+                    <CheckBox x:Name="chkWin" Margin="0,3,0,0" Click="chkWin_Checked" />
+                </WrapPanel>
+                <WrapPanel>
+                    <TextBlock Style="{StaticResource StandardText}" Text="Start Minimized"
+                               ToolTip="'Where's the window!?' &#10;That's right. The bottom right of your screen, with the other trayicons"/>
+                    <CheckBox x:Name="chkMin" Margin="0,3,0,0" Click="chkMin_Checked" />
+                </WrapPanel>
+                <WrapPanel>
+                    <TextBlock Style="{StaticResource StandardText}" Text="Sound on/off" 
+                               ToolTip="Checked for sound, unchecked for silence. Can also be controlled from the trayicon. &#10;The sound can be whatever you want, as long as it is a Waveform Audio File."/>
+                    <CheckBox x:Name="chkSound" Margin="0,3,0,0" Click="chkSound_Checked" />
+                </WrapPanel>
+                <WrapPanel>
+                    <Button x:Name="btnSoundSelect" Style="{DynamicResource DefaultButton}" Content="Select Sound (.wav)" Click="btnSoundSelect_Click" />
+                </WrapPanel>
+                <WrapPanel>
+                    <TextBlock Text="Monitor" Style="{StaticResource StandardText}" Margin="0,0,5,0" 
+                               ToolTip="For systems utilizing multiple monitors. Select which monitor the notification window should appear on. &#10;Indexing starts at 0 for the primary screen."/>
+                    <ComboBox x:Name="dropMonitorSelect" SelectionChanged="dropMonitorSelect_SelectionChanged" Margin="0,0,0,5" />
+                </WrapPanel>
+                <Separator Margin="0,0,0,9" Width="200" />
+                <WrapPanel>
+                    <Button x:Name="btnRestart" Style="{DynamicResource DefaultButton}" Content="Restart Application" Click="btnRestart_Click" />
+                    <Button x:Name="btnInstallPath" Style="{DynamicResource DefaultButton}" Content="Open Program Folder" Click="btnInstallPath_Click" />
+                    <!--<Button x:Name="btnConfigEdit" Style="{DynamicResource DefaultButton}" Content="Direct Config Edit" Click="btnConfigEdit_Click" />-->
+                </WrapPanel>
+                <TextBlock Style="{StaticResource StandardText}" Text="Hover over this or any other text, to get further info" FontSize="10" HorizontalAlignment="Center"
+                           ToolTip="This program minimizes into a trayicon. These are the small icons typically found
+                           &#10;in the bottom right of the screen.
+                           &#10;Trayicon controls:
+                           &#10; - Left click displays the last recieved update
+                           &#10; - Middle click opens the main window
+                           &#10; - Right click opens the context menu
+                           &#10;
+                           &#10;F12 for the console" />
+
+                <TextBlock x:Name="sourceCodeLink" Style="{StaticResource StandardText}" Text="Source Code" TextDecorations="Underline" FontSize="10.667" HorizontalAlignment="Right" Margin="1,20,9,0" MouseDown="sourceCodeLink_MouseDown" Cursor="Hand" />
+            </StackPanel>
+            <!--/Settings-->
+
+            <!--Console-->
+            <Grid x:Name="ConsolePanel" Visibility="Hidden">
+                <RichTextBox x:Name="DevConsoleOutput" IsReadOnly="True" Margin="0,0,0,26" VerticalScrollBarVisibility="Visible">
+                    <RichTextBox.Resources>
+                        <Style TargetType="{x:Type Paragraph}">
+                            <Setter Property="Margin" Value="0" />
+                        </Style>
+                    </RichTextBox.Resources>
+                </RichTextBox>
+                <TextBox x:Name="DevConsoleInput" Height="22" KeyDown="DevConsoleInput_KeyDown" VerticalAlignment="Bottom" Margin="0,0,0,2" />
+            </Grid>
+            <!--/Console-->
+        </Grid>
+        <!-- /Content -->
+    </Grid>
+</Window>
