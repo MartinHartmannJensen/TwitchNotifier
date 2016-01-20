@@ -6,7 +6,7 @@ Set n' forget, if you choose to make it start minimized with Windows.
 
 #### [Download the Installer][Releases]
 
-#### [Getting Started - A Quick Guide][Wiki]
+#### [Getting Started - A Quick Guide][Howto]
 
 
 ### How it works
@@ -21,6 +21,6 @@ Nothing is stored anywhere, besides the user settings in a local config file.
 Licensed under the MIT License
 
 [Releases]: <https://github.com/MartinHartmannJensen/TwitchNotifier/releases>
-[Wiki]: <https://github.com/MartinHartmannJensen/TwitchNotifier/wiki>
+[Howto]: <https://github.com/MartinHartmannJensen/TwitchNotifier/wiki#getting-started---a-quick-guide>
 [scopes]: <https://github.com/justintv/Twitch-API/blob/master/authentication.md#scopes>
 [API]: <https://github.com/justintv/Twitch-API>
