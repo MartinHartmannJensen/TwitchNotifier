@@ -1,6 +1,6 @@
-*MyClientIDfile.cs
+## App specific
+*MyClientId.cs
 *ATNlogo.ico
-*ArethruTwitchNotifier_TemporaryKey.pfx
 
 
 ## Ignore Visual Studio temporary files, build results, and
