@@ -1,7 +1,26 @@
-# TwitchNotifier
-Program written in c# for Windows 7 (might work on other versions, it is not tested at all). 
-Displays notifications based on a users Twitch.tv account follows.
+# ArethruNotifier
 
-Download  Application [Here](https://github.com/MartinHartmannJensen/TwitchNotifier/releases)
+Program written for Windows. Designed to track when when a Twitch.tv streamer goes live, based on a users Twitch.tv follows.
+Can be configured to run minimized in the background, displaying notifications and playing a sound whenever someone goes live.
+Set n' forget, if you choose to make it start minimized with Windows.
 
-Suggestions for improvements are welcome, though this is mainly made for personal use. However if you feel you are up to it, then go ahead and fork the project and do whatever you want with it. It is licensed under the MIT License.
+#### [Download the Installer][Releases]
+
+#### [Getting Started - A Quick Guide][Wiki]
+
+
+### How it works
+
+Using the [Twitch API][API], this program contacts their servers periodically to check for updates. How often it checks, 
+can be configured by the user.
+It will need persmission to a twitch user profile. You can read about the different access scopes [here][scopes]. This program utilizes
+the scope "user_read", and the permissions are displayed at authorization. There's only 2 types of information being fetched, though: 
+a users followed streams and the streams currently live for the user. 
+Nothing is stored anywhere, besides the user settings in a local config file.
+
+Licensed under the MIT License
+
+[Releases]: <https://github.com/MartinHartmannJensen/TwitchNotifier/releases>
+[Wiki]: <https://github.com/MartinHartmannJensen/TwitchNotifier/wiki>
+[scopes]: <https://github.com/justintv/Twitch-API/blob/master/authentication.md#scopes>
+[API]: <https://github.com/justintv/Twitch-API>
