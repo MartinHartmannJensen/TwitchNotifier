@@ -100,13 +100,20 @@
                                ToolTip="This is how long in seconds, the popup/notification window should stay up before automatically closing down."/>
                     <TextBox x:Name="boxPopTime" Width="38" PreviewTextInput="PreviewInputBoxNumbers" KeyDown="boxPopTime_KeyDown" />
                 </WrapPanel>
-                <WrapPanel>
+                <WrapPanel Visibility="Collapsed">
                     <TextBlock Style="{StaticResource StandardText}" Text="Offline Mode" 
                                ToolTip="For testing. Restart required upon change. This disables the timer that periodically contacts the twitch servers." />
                     <CheckBox x:Name="chkUpd" Margin="0,3,0,0" Click="chkUpd_Checked" />
                 </WrapPanel>
                 <WrapPanel>
-                    <TextBlock Style="{StaticResource StandardText}" Text="Start with Windows"
+                    <TextBlock Style="{StaticResource StandardText}" Text="Open Streams With Script" 
+                               ToolTip="When clicking on a name in the Twitch Notification window, it will default to opening the stream with
+                               &#10; the default browser. With this checked, it runs the script StreamStart.cmd.
+                               &#10; Made so you can open streams with your preferred software." />
+                    <CheckBox x:Name="chkScript" Margin="0,3,0,0" Click="chkScript_Click" />
+                </WrapPanel>
+                <WrapPanel>
+                    <TextBlock Style="{StaticResource StandardText}" Text="Start With Windows"
                                ToolTip="Adds a key/value pair to the windows registry startup run folder"/>
                     <CheckBox x:Name="chkWin" Margin="0,3,0,0" Click="chkWin_Checked" />
                 </WrapPanel>
@@ -117,7 +124,8 @@
                 </WrapPanel>
                 <WrapPanel>
                     <TextBlock Style="{StaticResource StandardText}" Text="Sound on/off" 
-                               ToolTip="Checked for sound, unchecked for silence. Can also be controlled from the trayicon. &#10;The sound can be whatever you want, as long as it is a Waveform Audio File."/>
+                               ToolTip="Checked for sound, unchecked for silence. Can also be controlled from the trayicon. &#10;The sound can be whatever you want, as long as it is a Waveform Audio File.
+                               &#10; Add sound by placing any file named sound.wav in the program folder. Delete it for default sound."/>
                     <CheckBox x:Name="chkSound" Margin="0,3,0,0" Click="chkSound_Checked" />
                 </WrapPanel>
                 <WrapPanel>

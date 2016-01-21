@@ -29,9 +29,15 @@ namespace ArethruNotifier
 
             InitializeTrayIcon();
             Set_SettingsUI();
+            DoStartupFunctions();
         }
         
         #region Misc. Methods
+
+        void DoStartupFunctions()
+        {
+            MiscOperations.CreateStreamLaunchFile();
+        }
 
         void InitializeTrayIcon()
         {
@@ -335,6 +341,11 @@ namespace ArethruNotifier
         private void sourceCodeLink_MouseDown(object sender, MouseButtonEventArgs e)
         {
             System.Diagnostics.Process.Start("https://github.com/MartinHartmannJensen/TwitchNotifier");
+        }
+
+        private void chkScript_Click(object sender, RoutedEventArgs e)
+        {
+            UserSettings.Default.OpenStreamWithScript = (bool)chkScript.IsChecked;
         }
 
         #endregion

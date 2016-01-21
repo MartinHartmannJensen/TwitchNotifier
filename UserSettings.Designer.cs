@@ -118,5 +118,17 @@ namespace ArethruNotifier {
                 this["DisplayMonitor"] = value;
             }
         }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool OpenStreamWithScript {
+            get {
+                return ((bool)(this["OpenStreamWithScript"]));
+            }
+            set {
+                this["OpenStreamWithScript"] = value;
+            }
+        }
     }
 }

@@ -19,18 +19,20 @@ namespace ArethruNotifier
 
         Thread updater;
         Thread windowThread;
-        Thread soundThread;
         System.Media.SoundPlayer player;
+
+        string soundPath = Environment.CurrentDirectory + @"\" + "sound.wav";
 
 
         private NotifyCtr()
         {
-            TwitchDataHandler.Instance.FoundNewStreamEvent += new NewStreamFoundEventHandler((StreamsInfo si) => {
+            TwitchDataHandler.Instance.FoundNewStreamEvent += new NewStreamFoundEventHandler((StreamsInfo si) =>
+            {
                 DisplayNotification(si, UserSettings.Default.NotificationScreenTime);
             });
         }
 
-        public void StartStreamContainerUpdater()
+        public void StartStreaminfoUpdater()
         {
             if (updater != null && updater.IsAlive)
                 updater.Abort();
@@ -43,9 +45,6 @@ namespace ArethruNotifier
 
                 while (true)
                 {
-                    //if (NotifyEvent != null)
-                    //    NotifyEvent(null, EventArgs.Empty);
-
                     var yup = WebComm.GetLiveStreams();
                     TwitchDataHandler.Instance.UpdateAndCompare(yup);
 
@@ -106,37 +105,21 @@ namespace ArethruNotifier
             windowThread.Start();
         }
 
-        public void PlaySound(string name)
+        public void PlaySound()
         {
-            //if (Properties.Settings.Default.PlaySound)
             if (UserSettings.Default.PlaySound)
             {
-                if (soundThread != null && soundThread.IsAlive)
-                    soundThread.Abort();
-
-                soundThread = new Thread(new ThreadStart(() =>
+                try
                 {
-                    string soundName = name;
-
-                    string soundPath = Environment.CurrentDirectory + @"\" + soundName;
-
-                    try
-                    {
-                        player = new System.Media.SoundPlayer(soundPath);
-                        player.Play();
-                    }
-                    catch (System.IO.FileNotFoundException)
-                    {
-                        System.Media.SystemSounds.Asterisk.Play();
-                    }
-                    catch (System.InvalidOperationException)
-                    {
-                        System.Media.SystemSounds.Asterisk.Play();
-                    }
-                }));
-
-                soundThread.IsBackground = true;
-                soundThread.Start();
+                    player = new System.Media.SoundPlayer(soundPath);
+                    player.Play();
+                }
+                catch (System.IO.FileNotFoundException)
+                {
+                    player = new System.Media.SoundPlayer(Properties.Resources.nSound);
+                    player.Play();
+                }
+                //System.Media.SystemSounds.Asterisk.Play();
             }
         }
 
