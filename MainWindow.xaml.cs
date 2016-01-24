@@ -96,10 +96,7 @@ namespace ArethruNotifier
             var tup = TwitchDataHandler.Instance.GetFollows();
 
             if (tup == null)
-            {
-                DevConsoleOutput.AppendText("Error Getting follows");
                 return;
-            }
 
             Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
             {
@@ -272,13 +269,15 @@ namespace ArethruNotifier
 
         private void btnRestart_Click(object sender, RoutedEventArgs e)
         {
+            ConfigMgnr.I.Save();
+            System.Threading.Thread.Sleep(100);
             WinForms.Application.Restart();
             System.Diagnostics.Process.GetCurrentProcess().Kill();
         }
 
-        private void btnInstallPath_Click(object sender, RoutedEventArgs e)
+        private void btnConfigPath_Click(object sender, RoutedEventArgs e)
         {
-            System.Diagnostics.Process.Start(Environment.CurrentDirectory);
+            System.Diagnostics.Process.Start(ConfigMgnr.I.FolderPath);
         }
 
         //private void btnConfigEdit_Click(object sender, RoutedEventArgs e)

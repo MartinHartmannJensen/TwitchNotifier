@@ -22,9 +22,11 @@ namespace ArethruNotifier
                                 "&scope=" + scopes +
                                 "&state=somestate123";
 
-        static string htmlResponseSuccess = "<HTML><BODY style='text-align:center'><h3>Success!</h3><br>" +
-            "Twitch response recieved. You can now close this page and return to the program.<br>"
-            + "Your client <i>should be</i> authorized now.</BODY></HTML>";
+        static string htmlResponseSuccess = "<HTML><BODY style='text-align:center'>"
+            + "<h3>Success!</h3><br>" 
+            + "All you need to do now, is restart the application. (Using the restart button or closing and opening again will both work)<br>"
+            + "And that's it, you should be set. Should you encounter any issues, then there is the issue tracker on github."
+            + "</BODY></HTML>";
 
         public static StreamsInfo GetLiveStreams()
         {

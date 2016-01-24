@@ -5,7 +5,8 @@
 
     <SolidColorBrush x:Key="Color_Panel1" Color="#FF3A3A3A" />
     <SolidColorBrush x:Key="Color_Panel2" Color="#FF575757" />
-    <SolidColorBrush x:Key="Color_Panel3" Color="#FF2C2C2C" />
+    <SolidColorBrush x:Key="Color_Panel3" Color="#FF25262A" />
+    <SolidColorBrush x:Key="Color_Panel4" Color="#FF323742" />
     <SolidColorBrush x:Key="Color_ActivePurple" Color="#FF891290" />
     <SolidColorBrush x:Key="Color_DefaultText" Color="White" />
     <SolidColorBrush x:Key="Color_Highlight" Color="Red" />
@@ -54,7 +55,7 @@
     <Style x:Key="NavbarBorder" TargetType="Border">
         <Setter Property="BorderThickness" Value="0,2" />
         <Setter Property="CornerRadius" Value="3" />
-        <Setter Property="Background" Value="{DynamicResource Color_Panel2}" />
+        <Setter Property="Background" Value="{DynamicResource Color_Panel4}" />
         <Setter Property="BorderBrush" Value="Black" />
         <Setter Property="Margin" Value="0,0,0,9" />
         <Setter Property="Height" Value="34" />

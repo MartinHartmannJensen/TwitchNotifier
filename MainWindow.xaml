@@ -7,7 +7,7 @@
         mc:Ignorable="d"
         Title="Arethru Notifier" Height="477" Width="660" StateChanged="Window_StateChanged">
 
-    <Grid Background="{DynamicResource Color_Panel1}">
+    <Grid Background="{DynamicResource Color_Panel3}">
         <!--NavBar-->
         <Border Style="{StaticResource NavbarBorder}">
             <WrapPanel x:Name="HeaderPanel">
@@ -109,7 +109,7 @@
                     <TextBlock Style="{StaticResource StandardText}" Text="Open Streams With Script" 
                                ToolTip="When clicking on a name in the Twitch Notification window, it will default to opening the livestream
                                &#10;in the default browser. With this checked, it instead uses the StartStream.cmd script
-                               &#10;that is configurable by the user. Launch away with your preferred software!" />
+                               &#10;that is configurable by the user. Launch away with your preferred software! Located in the Config Folder." />
                     <CheckBox x:Name="chkScript" Margin="0,3,0,0" Click="chkScript_Click" />
                 </WrapPanel>
                 <WrapPanel>
@@ -138,9 +138,8 @@
                 </WrapPanel>
                 <Separator Margin="0,0,0,9" Width="200" />
                 <WrapPanel>
-                    <Button x:Name="btnRestart" Style="{DynamicResource DefaultButton}" Content="Restart Application" Click="btnRestart_Click" />
-                    <Button x:Name="btnInstallPath" Style="{DynamicResource DefaultButton}" Content="Open Program Folder" Click="btnInstallPath_Click" />
-                    <!--<Button x:Name="btnConfigEdit" Style="{DynamicResource DefaultButton}" Content="Direct Config Edit" Click="btnConfigEdit_Click" />-->
+                    <Button x:Name="btnRestart" Style="{DynamicResource DefaultButton}" Content="Restart" Click="btnRestart_Click" />
+                    <Button x:Name="btnConfigPath" Style="{DynamicResource DefaultButton}" Content="Config Folder" Click="btnConfigPath_Click" />
                 </WrapPanel>
                 <TextBlock Style="{StaticResource StandardText}" Text="Need help? Hover over text to get descriptions,&#10;             or follow the Source Code link." FontSize="10" HorizontalAlignment="Center"
                            ToolTip="This program minimizes into a trayicon. These are the small icons typically found

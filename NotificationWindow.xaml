@@ -11,7 +11,7 @@
     <Grid RenderTransformOrigin="0,1" >
 
         <!-- Design-->
-        <Border BorderThickness="1" Background="{DynamicResource Color_Panel1}"  BorderBrush="Black" CornerRadius="2">
+        <Border BorderThickness="1" Background="{DynamicResource Color_Panel3}"  BorderBrush="Black" CornerRadius="2">
             <StackPanel Margin="5">
                 <Grid Height="Auto" Width="Auto">
                     <Grid.ColumnDefinitions>
@@ -41,7 +41,7 @@
                     <TextBlock Text="No info to show" HorizontalAlignment="Center" Foreground="{DynamicResource Color_DefaultText}" FontStyle="Italic" />
                 </StackPanel>
 
-                <ListView Margin="2" Name="listDataBinding" Background="{DynamicResource Color_Panel1}" BorderBrush="{x:Null}" SelectionMode="Single" SelectionChanged="listDataBinding_SelectionChanged" >
+                <ListView Margin="2" Name="listDataBinding" Background="{DynamicResource Color_Panel3}" BorderBrush="{x:Null}" SelectionMode="Single" SelectionChanged="listDataBinding_SelectionChanged" >
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <Grid ToolTip="{Binding Channel.Status}">
