@@ -104,12 +104,12 @@ namespace ArethruNotifier
             });
 
             oneliners["POP"] = new Action(() => {
-                NotifyCtr.Instance.DisplayNotification(new StreamsInfo(), UserSettings.Default.NotificationScreenTime);
+                NotifyCtr.Instance.DisplayNotification(new StreamsInfo(), ConfigMgnr.I.NotificationScreenTime);
             });
 
             oneliners["LIVEPOP"] = new Action(() => {
                 var si = WebComm.GetLiveStreams();
-                NotifyCtr.Instance.DisplayNotification(si, UserSettings.Default.NotificationScreenTime);
+                NotifyCtr.Instance.DisplayNotification(si, ConfigMgnr.I.NotificationScreenTime);
             });
 
             oneliners["FOLLOWS"] = new Action(() => {

@@ -50,13 +50,13 @@ namespace ArethruNotifier
 
             var myItem = (StreamsObj)listV.Items[listV.SelectedIndex];
 
-            if (!UserSettings.Default.OpenStreamWithScript)
+            if (!ConfigMgnr.I.OpenStreamWithScript)
             {
                 System.Diagnostics.Process.Start("http://www.twitch.tv/" + myItem.Channel.Name);
             }
             else
             {
-                System.Diagnostics.Process.Start(string.Format(@"{0}\{1}", Environment.CurrentDirectory, MiscOperations.StreamFileName),
+                System.Diagnostics.Process.Start(string.Format(@"{0}\{1}", ConfigMgnr.I.FolderPath, MiscOperations.StreamFileName),
                 myItem.Channel.Name);
             }
             this.Close();

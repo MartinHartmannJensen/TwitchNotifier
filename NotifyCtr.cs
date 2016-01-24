@@ -7,6 +7,7 @@ namespace ArethruNotifier
     {
         private static NotifyCtr instance = null;
 
+
         public static NotifyCtr Instance
         {
             get
@@ -28,7 +29,7 @@ namespace ArethruNotifier
         {
             TwitchDataHandler.Instance.FoundNewStreamEvent += new NewStreamFoundEventHandler((StreamsInfo si) =>
             {
-                DisplayNotification(si, UserSettings.Default.NotificationScreenTime);
+                DisplayNotification(si, ConfigMgnr.I.NotificationScreenTime);
                 PlaySound();
             });
         }
@@ -40,7 +41,7 @@ namespace ArethruNotifier
 
             updater = new Thread(new ThreadStart(() =>
             {
-                var seconds = UserSettings.Default.UpdateFrequency;
+                var seconds = ConfigMgnr.I.UpdateFrequency;
 
                 Thread.Sleep(1000);
 
@@ -74,8 +75,8 @@ namespace ArethruNotifier
                 // Try and set display monitor
                 try
                 {
-                    var testArrayOutOfBounds = System.Windows.Forms.Screen.AllScreens[UserSettings.Default.DisplayMonitor];
-                    w.MonitorIndex = UserSettings.Default.DisplayMonitor;
+                    var testArrayOutOfBounds = System.Windows.Forms.Screen.AllScreens[ConfigMgnr.I.DisplayMonitor];
+                    w.MonitorIndex = ConfigMgnr.I.DisplayMonitor;
                 }
                 catch (IndexOutOfRangeException)
                 {
@@ -108,7 +109,7 @@ namespace ArethruNotifier
 
         public void PlaySound()
         {
-            if (UserSettings.Default.PlaySound)
+            if (ConfigMgnr.I.PlaySound)
             {
                 try
                 {

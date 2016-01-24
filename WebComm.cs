@@ -11,7 +11,7 @@ namespace ArethruNotifier
     {
         static string clientID = MyClientID.clientID;
         static string clientSecret = MyClientID.clientSecret;
-        static string userToken = UserSettings.Default.UserToken;
+        static string userToken = ConfigMgnr.I.UserToken;
         static string redirectURI = "http://localhost:4515/oauth2/authorize/arethrunotifier";
         static string scopes = "user_read";
 

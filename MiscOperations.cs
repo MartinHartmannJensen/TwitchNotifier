@@ -7,7 +7,7 @@ namespace ArethruNotifier
 {
     public static class MiscOperations
     {
-        public static string RunFileName = "LaunchArethruNotifier.cmd";
+        public static string RunFileName = "ArethruNotifier.exe";
         public static string StreamFileName = "StreamStart.cmd";
 
 
@@ -22,11 +22,12 @@ namespace ArethruNotifier
             }
         }
 
-        public static void CreateStreamLaunchFile()
+        public static void CreateStreamLaunchFile(string FolderPath)
         {
-            if (!File.Exists(string.Format(@"{0}\{1}", Environment.CurrentDirectory, StreamFileName)))
+            Directory.CreateDirectory(FolderPath);
+            if (!File.Exists(string.Format(@"{0}\{1}", FolderPath, StreamFileName)))
             {
-                using (StreamWriter sw = new StreamWriter(StreamFileName))
+                using (StreamWriter sw = new StreamWriter(FolderPath + @"\" + StreamFileName))
                 {
                     sw.WriteLine("@echo off");
                     sw.WriteLine("");
@@ -43,8 +44,6 @@ namespace ArethruNotifier
 
         public static void SetRegistryStartup(bool checkValue)
         {
-            CreateRunFile();
-
             string name = "ArethruNotifier";
 
             RegistryKey rk = Registry.CurrentUser.OpenSubKey
@@ -54,6 +53,8 @@ namespace ArethruNotifier
                 rk.SetValue(name, string.Format(@"{0}\{1}", Environment.CurrentDirectory, RunFileName));
             else
                 rk.DeleteValue(name, false);
+
+            rk.Close();
         }
     }
 }
