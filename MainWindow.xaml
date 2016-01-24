@@ -107,14 +107,14 @@
                 </WrapPanel>
                 <WrapPanel>
                     <TextBlock Style="{StaticResource StandardText}" Text="Open Streams With Script" 
-                               ToolTip="When clicking on a name in the Twitch Notification window, it will default to opening the stream with
-                               &#10; the default browser. With this checked, it runs the script StreamStart.cmd.
-                               &#10; Made so you can open streams with your preferred software." />
+                               ToolTip="When clicking on a name in the Twitch Notification window, it will default to opening the livestream
+                               &#10;in the default browser. With this checked, it instead uses the StartStream.cmd script
+                               &#10;that is configurable by the user. Launch away with your preferred software!" />
                     <CheckBox x:Name="chkScript" Margin="0,3,0,0" Click="chkScript_Click" />
                 </WrapPanel>
                 <WrapPanel>
                     <TextBlock Style="{StaticResource StandardText}" Text="Start With Windows"
-                               ToolTip="Adds a key/value pair to the windows registry startup run folder"/>
+                               ToolTip="Adds the program to the registry key &#10; HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"/>
                     <CheckBox x:Name="chkWin" Margin="0,3,0,0" Click="chkWin_Checked" />
                 </WrapPanel>
                 <WrapPanel>
@@ -142,7 +142,7 @@
                     <Button x:Name="btnInstallPath" Style="{DynamicResource DefaultButton}" Content="Open Program Folder" Click="btnInstallPath_Click" />
                     <!--<Button x:Name="btnConfigEdit" Style="{DynamicResource DefaultButton}" Content="Direct Config Edit" Click="btnConfigEdit_Click" />-->
                 </WrapPanel>
-                <TextBlock Style="{StaticResource StandardText}" Text="Hover over this or any other text, to get further info" FontSize="10" HorizontalAlignment="Center"
+                <TextBlock Style="{StaticResource StandardText}" Text="Need help? Hover over text to get descriptions,&#10;             or follow the Source Code link." FontSize="10" HorizontalAlignment="Center"
                            ToolTip="This program minimizes into a trayicon. These are the small icons typically found
                            &#10;in the bottom right of the screen.
                            &#10;Trayicon controls:

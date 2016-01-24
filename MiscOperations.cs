@@ -45,13 +45,13 @@ namespace ArethruNotifier
         {
             CreateRunFile();
 
-            string name = "ArethruTwitchNotifier";
+            string name = "ArethruNotifier";
 
             RegistryKey rk = Registry.CurrentUser.OpenSubKey
             ("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
 
             if (checkValue)
-                rk.SetValue(name, Environment.CurrentDirectory + @"\RunApplication.bat");
+                rk.SetValue(name, string.Format(@"{0}\{1}", Environment.CurrentDirectory, RunFileName));
             else
                 rk.DeleteValue(name, false);
         }

@@ -29,6 +29,7 @@ namespace ArethruNotifier
             TwitchDataHandler.Instance.FoundNewStreamEvent += new NewStreamFoundEventHandler((StreamsInfo si) =>
             {
                 DisplayNotification(si, UserSettings.Default.NotificationScreenTime);
+                PlaySound();
             });
         }
 

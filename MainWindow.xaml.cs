@@ -37,13 +37,25 @@ namespace ArethruNotifier
         void DoStartupFunctions()
         {
             MiscOperations.CreateStreamLaunchFile();
+            MiscOperations.CreateRunFile();
+
+            if (!UserSettings.Default.OfflineMode)
+            {
+                NotifyCtr.Instance.StartStreaminfoUpdater();
+            }
+            if (UserSettings.Default.StartMinimized)
+            {
+                this.WindowState = WindowState.Minimized;
+                this.OnStateChanged(EventArgs.Empty);
+            }
+
+            UpdateFollowsList();
         }
 
         void InitializeTrayIcon()
         {
             trayicon = new WinForms.NotifyIcon();
-            //trayicon.Icon = new System.Drawing.Icon("ATNlogo.ico");
-            trayicon.Icon = System.Drawing.SystemIcons.Application;
+            trayicon.Icon = Properties.Resources.ATNlogo;
             trayicon.BalloonTipText = "Arethru Twitch Notifier";
             trayicon.ContextMenu = new WinForms.ContextMenu(new WinForms.MenuItem[4]
             {
@@ -340,7 +352,7 @@ namespace ArethruNotifier
 
         private void sourceCodeLink_MouseDown(object sender, MouseButtonEventArgs e)
         {
-            System.Diagnostics.Process.Start("https://github.com/MartinHartmannJensen/TwitchNotifier");
+            System.Diagnostics.Process.Start("https://github.com/MartinHartmannJensen/TwitchNotifier#arethrunotifier");
         }
 
         private void chkScript_Click(object sender, RoutedEventArgs e)
