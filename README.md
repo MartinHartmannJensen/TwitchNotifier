@@ -18,9 +18,12 @@ the scope "user_read", and the permissions are displayed at authorization. There
 a users followed streams and the streams currently live for the user. 
 Nothing is stored anywhere, besides the user settings in a local config file.
 
+Made with [package developed by Newtonsoft][newt]
+
 Licensed under the MIT License
 
 [Releases]: <https://github.com/MartinHartmannJensen/TwitchNotifier/releases>
 [Howto]: <https://github.com/MartinHartmannJensen/TwitchNotifier/wiki#getting-started---a-quick-guide>
 [scopes]: <https://github.com/justintv/Twitch-API/blob/master/authentication.md#scopes>
 [API]: <https://github.com/justintv/Twitch-API>
+[newt]: <https://www.nuget.org/packages/Newtonsoft.Json/>
