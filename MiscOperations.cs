@@ -11,16 +11,16 @@ namespace ArethruNotifier
         public static string StreamFileName = "StreamStart.cmd";
 
 
-        public static void CreateRunFile()
-        {
-            if (!File.Exists(string.Format(@"{0}\{1}", Environment.CurrentDirectory, RunFileName)))
-            {
-                using (StreamWriter sw = new StreamWriter(RunFileName))
-                {
-                    sw.Write(@"START /d " + '\u0022' + Environment.CurrentDirectory + '\u0022' + " " + WinForms.Application.ProductName + ".exe");
-                }
-            }
-        }
+        //public static void CreateRunFile()
+        //{
+        //    if (!File.Exists(string.Format(@"{0}\{1}", Environment.CurrentDirectory, RunFileName)))
+        //    {
+        //        using (StreamWriter sw = new StreamWriter(RunFileName))
+        //        {
+        //            sw.Write(@"START /d " + '\u0022' + Environment.CurrentDirectory + '\u0022' + " " + WinForms.Application.ProductName + ".exe");
+        //        }
+        //    }
+        //}
 
         public static void CreateStreamLaunchFile(string FolderPath)
         {
@@ -42,15 +42,15 @@ namespace ArethruNotifier
             }
         }
 
-        public static void SetRegistryStartup(bool checkValue)
+        public static void SetRegistryStartup(bool SetKey)
         {
             string name = "ArethruNotifier";
 
             RegistryKey rk = Registry.CurrentUser.OpenSubKey
             ("SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Run", true);
 
-            if (checkValue)
-                rk.SetValue(name, string.Format(@"{0}\{1}", Environment.CurrentDirectory, RunFileName));
+            if (SetKey)
+                rk.SetValue(name, string.Format(@"{0}\{1}", WinForms.Application.StartupPath, RunFileName), RegistryValueKind.String);
             else
                 rk.DeleteValue(name, false);
 

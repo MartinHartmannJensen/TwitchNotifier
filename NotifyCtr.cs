@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Threading;
+using WinForms = System.Windows.Forms;
 
 namespace ArethruNotifier
 {
@@ -22,7 +23,7 @@ namespace ArethruNotifier
         Thread windowThread;
         System.Media.SoundPlayer player;
 
-        string soundPath = Environment.CurrentDirectory + @"\" + "sound.wav";
+        string soundPath = ConfigMgnr.I.FolderPath + @"\sound.wav";
 
 
         private NotifyCtr()

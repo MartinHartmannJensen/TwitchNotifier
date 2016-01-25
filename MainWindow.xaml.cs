@@ -6,7 +6,6 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using WinForms = System.Windows.Forms;
 using System.Text.RegularExpressions;
-using System.Collections.Generic;
 
 namespace ArethruNotifier
 {
@@ -50,8 +49,6 @@ namespace ArethruNotifier
                 this.WindowState = WindowState.Minimized;
                 this.OnStateChanged(EventArgs.Empty);
             }
-
-            UpdateFollowsList();
         }
 
         void InitializeTrayIcon()
@@ -93,16 +90,21 @@ namespace ArethruNotifier
 
         public void UpdateFollowsList()
         {
-            var tup = TwitchDataHandler.Instance.GetFollows();
-
-            if (tup == null)
-                return;
-
-            Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
-            {
-                FollowsList.ItemsSource = tup.Item1;
-                FollowsList2.ItemsSource = tup.Item2;
-            }));
+            var originalTitle = this.Title;
+            this.Title = originalTitle + " - Fetching list, hold on!";
+            System.Threading.Thread t = new System.Threading.Thread(() => {
+                var tup = TwitchDataHandler.Instance.GetFollows();
+                Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() =>
+                {
+                    if (tup != null)
+                    {
+                        FollowsList.ItemsSource = tup.Item1;
+                        FollowsList2.ItemsSource = tup.Item2;
+                    }
+                    this.Title = originalTitle;
+                }));
+            });
+            t.Start();
         }
 
         void SetActivePanel(int i)
@@ -226,7 +228,7 @@ namespace ArethruNotifier
                 {
                     if ((soundFile = opf.OpenFile()) != null)
                     {
-                        using (var fileStream = new System.IO.FileStream(WinForms.Application.StartupPath + @"\nSound.wav", System.IO.FileMode.Create, System.IO.FileAccess.Write))
+                        using (var fileStream = new System.IO.FileStream(ConfigMgnr.I.FolderPath + @"\sound.wav", System.IO.FileMode.Create, System.IO.FileAccess.Write))
                         {
                             soundFile.CopyTo(fileStream);
                         }
@@ -265,6 +267,9 @@ namespace ArethruNotifier
                 else
                     navBtns[i].Foreground = defCol;
             }
+
+            if (s.Equals(btn_Follows))
+                UpdateFollowsList();
         }
 
         private void btnRestart_Click(object sender, RoutedEventArgs e)
