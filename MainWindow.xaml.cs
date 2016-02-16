@@ -15,6 +15,7 @@ namespace ArethruNotifier
         AN_Console Acon;
         WinForms.NotifyIcon trayicon;
         WinForms.MenuItem trayiconSound;
+        WinForms.MenuItem trayiconMonitor;
 
         public MainWindow()
         {
@@ -56,15 +57,17 @@ namespace ArethruNotifier
             trayicon = new WinForms.NotifyIcon();
             trayicon.Icon = Properties.Resources.ATNlogo;
             trayicon.BalloonTipText = "Arethru Twitch Notifier";
-            trayicon.ContextMenu = new WinForms.ContextMenu(new WinForms.MenuItem[4]
+            trayicon.ContextMenu = new WinForms.ContextMenu(new WinForms.MenuItem[]
             {
+                new WinForms.MenuItem("Monitor"),
                 new WinForms.MenuItem("Refresh", trayicon_RefreshStreamInfo),
                 new WinForms.MenuItem("Main Window", trayicon_OpenMainWindow),
                 new WinForms.MenuItem("Sound", trayicon_Sound),
                 new WinForms.MenuItem("Exit", trayicon_Exit)
             });
 
-            trayiconSound = trayicon.ContextMenu.MenuItems[2];
+            trayiconSound = trayicon.ContextMenu.MenuItems[3];
+            trayiconMonitor = trayicon.ContextMenu.MenuItems[0];
             trayicon.MouseUp += trayicon_Click;
         }
 
@@ -78,14 +81,18 @@ namespace ArethruNotifier
             chkSound.IsChecked = ConfigMgnr.I.PlaySound;
             trayiconSound.Checked = ConfigMgnr.I.PlaySound;
 
+
+            //Monitor selection setup
             var monitors = WinForms.Screen.AllScreens;
             var dropArr = new int[monitors.Length];
             for (int i = 0; i < monitors.Length; i++)
             {
                 dropArr[i] = i;
+                trayiconMonitor.MenuItems.Add(new WinForms.MenuItem(i.ToString(), trayicon_MonitorItem));
             }
             dropMonitorSelect.ItemsSource = dropArr;
             dropMonitorSelect.SelectedIndex = ConfigMgnr.I.DisplayMonitor;
+            trayiconMonitor.MenuItems[ConfigMgnr.I.DisplayMonitor].Checked = true;
         }
 
         public void UpdateFollowsList()
@@ -124,6 +131,16 @@ namespace ArethruNotifier
             Regex regex = new Regex("^[0-9]+$");
             return regex.IsMatch(text);
         }
+
+        void SetTrayMonitorSelection(int selection)
+        {
+            foreach (WinForms.MenuItem item in trayiconMonitor.MenuItems)
+            {
+                item.Checked = false;
+            }
+            trayiconMonitor.MenuItems[selection].Checked = true;
+        }
+
         #endregion
 
 
@@ -174,6 +191,15 @@ namespace ArethruNotifier
                 chkSound.IsChecked = true;
                 ConfigMgnr.I.PlaySound = true;
             }
+        }
+
+        private void trayicon_MonitorItem(object sender, EventArgs e)
+        {
+            var m = (WinForms.MenuItem)sender;
+            int selection = int.Parse(m.Text);
+            SetTrayMonitorSelection(selection);
+            dropMonitorSelect.SelectedIndex = selection;
+            ConfigMgnr.I.DisplayMonitor = selection;
         }
 
 
@@ -322,7 +348,7 @@ namespace ArethruNotifier
         {
             if (e.Key == Key.Enter)
             {
-                ConfigMgnr.I.UpdateFrequency = int.Parse(boxUpdFreq.Text);
+                //ConfigMgnr.I.UpdateFrequency = int.Parse(boxUpdFreq.Text);
                 Keyboard.ClearFocus();
             }
         }
@@ -331,13 +357,14 @@ namespace ArethruNotifier
         {
             if (e.Key == Key.Enter)
             {
-                ConfigMgnr.I.NotificationScreenTime = int.Parse(boxPopTime.Text);
+                //ConfigMgnr.I.NotificationScreenTime = int.Parse(boxPopTime.Text);
                 Keyboard.ClearFocus();
             }
         }
 
         private void dropMonitorSelect_SelectionChanged(object sender, SelectionChangedEventArgs e)
         {
+            SetTrayMonitorSelection(dropMonitorSelect.SelectedIndex);
             ConfigMgnr.I.DisplayMonitor = dropMonitorSelect.SelectedIndex;
         }
 
@@ -364,6 +391,26 @@ namespace ArethruNotifier
         private void chkScript_Click(object sender, RoutedEventArgs e)
         {
             ConfigMgnr.I.OpenStreamWithScript = (bool)chkScript.IsChecked;
+        }
+
+        private void boxUpdFreq_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var s = (TextBox)sender;
+            int numba;
+            int.TryParse(s.Text, out numba);
+            if (numba < 10)
+                numba = 10;
+            ConfigMgnr.I.UpdateFrequency = numba;
+        }
+
+        private void boxPopTime_TextChanged(object sender, TextChangedEventArgs e)
+        {
+            var s = (TextBox)sender;
+            int numba;
+            int.TryParse(s.Text, out numba);
+            if (numba < 3)
+                numba = 3;
+            ConfigMgnr.I.NotificationScreenTime = numba;
         }
 
         #endregion

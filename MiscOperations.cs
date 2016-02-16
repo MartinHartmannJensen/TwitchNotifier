@@ -2,6 +2,8 @@
 using System.IO;
 using WinForms = System.Windows.Forms;
 using Microsoft.Win32;
+using System.Linq;
+using System.Xml.Linq;
 
 namespace ArethruNotifier
 {
@@ -10,17 +12,9 @@ namespace ArethruNotifier
         public static string RunFileName = "ArethruNotifier.exe";
         public static string StreamFileName = "StreamStart.cmd";
 
+        static string xmldocpath = ConfigMgnr.I.FolderPath + @"\favourites.xml";
 
-        //public static void CreateRunFile()
-        //{
-        //    if (!File.Exists(string.Format(@"{0}\{1}", Environment.CurrentDirectory, RunFileName)))
-        //    {
-        //        using (StreamWriter sw = new StreamWriter(RunFileName))
-        //        {
-        //            sw.Write(@"START /d " + '\u0022' + Environment.CurrentDirectory + '\u0022' + " " + WinForms.Application.ProductName + ".exe");
-        //        }
-        //    }
-        //}
+
 
         public static void CreateStreamLaunchFile(string FolderPath)
         {
@@ -55,6 +49,32 @@ namespace ArethruNotifier
                 rk.DeleteValue(name, false);
 
             rk.Close();
+        }
+
+        /// <summary>
+        /// Check if a stream exists within a group in the xml doc. 
+        /// </summary>
+        /// <param name="name">The stream to search for</param>
+        /// <param name="result">(System.Xml.Linq.XElement) The stream element with the tree info attached</param>
+        /// <returns>Returns 1 if true, 0 if false.</returns>
+        public static int TryGetFavourite(string name, out XElement result)
+        {
+            var xdoc = XDocument.Load(xmldocpath);
+
+            var query = from x in xdoc.Root.Elements("group").Elements("stream")
+                        where x.Value.Equals(name)
+                        select x;
+
+            var bufferresult = query.ToArray();
+
+            if (bufferresult.Length > 0)
+            {
+                result = bufferresult[0];
+                return 1;
+            }
+
+            result = null;
+            return 0;
         }
     }
 }

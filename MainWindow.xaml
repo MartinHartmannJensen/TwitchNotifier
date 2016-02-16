@@ -92,13 +92,13 @@
                 </WrapPanel>-->
                 <WrapPanel>
                     <TextBlock Style="{StaticResource StandardText}" Text="Update Frequency"
-                               ToolTip="This is how often in seconds, that the application should contact the twitch servers &#10;to check for updates." />
-                    <TextBox x:Name="boxUpdFreq" Width="38" PreviewTextInput="PreviewInputBoxNumbers" KeyDown="boxUpdFreq_KeyDown" />
+                               ToolTip="This is how often in seconds, that the application should contact the twitch servers&#10;to check for updates." />
+                    <TextBox x:Name="boxUpdFreq" Width="38" PreviewTextInput="PreviewInputBoxNumbers" KeyDown="boxUpdFreq_KeyDown" TextChanged="boxUpdFreq_TextChanged" />
                 </WrapPanel>
                 <WrapPanel>
                     <TextBlock Style="{StaticResource StandardText}" Text="Notification Display Time"
                                ToolTip="This is how long in seconds, the popup/notification window should stay up before automatically closing down."/>
-                    <TextBox x:Name="boxPopTime" Width="38" PreviewTextInput="PreviewInputBoxNumbers" KeyDown="boxPopTime_KeyDown" />
+                    <TextBox x:Name="boxPopTime" Width="38" PreviewTextInput="PreviewInputBoxNumbers" KeyDown="boxPopTime_KeyDown" TextChanged="boxPopTime_TextChanged" />
                 </WrapPanel>
                 <WrapPanel Visibility="Collapsed">
                     <TextBlock Style="{StaticResource StandardText}" Text="Offline Mode" 
@@ -107,25 +107,26 @@
                 </WrapPanel>
                 <WrapPanel>
                     <TextBlock Style="{StaticResource StandardText}" Text="Open Streams With Script" 
-                               ToolTip="When clicking on a name in the Twitch Notification window, it will default to opening the livestream
-                               &#10;in the default browser. With this checked, it instead uses the StartStream.cmd script
-                               &#10;that is configurable by the user. Launch away with your preferred software! Located in the Config Folder." />
+                               ToolTip="When clicking on a name in the Twitch Notification window,&#10;it will default to opening the livestream in the default browser.&#10;With this checked, it instead uses the StartStream.cmd script&#10;that is configurable by the user. Launch away with your preferred software!&#10;Located in the Config Folder." />
                     <CheckBox x:Name="chkScript" Margin="0,3,0,0" Click="chkScript_Click" />
                 </WrapPanel>
                 <WrapPanel>
                     <TextBlock Style="{StaticResource StandardText}" Text="Start With Windows"
-                               ToolTip="Adds the program to the registry key &#10; HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"/>
+                               ToolTip="Adds the program to the registry key
+                               &#10;HKEY_CURRENT_USER\SOFTWARE\Microsoft\Windows\CurrentVersion\Run"/>
                     <CheckBox x:Name="chkWin" Margin="0,3,0,0" Click="chkWin_Checked" />
                 </WrapPanel>
                 <WrapPanel>
                     <TextBlock Style="{StaticResource StandardText}" Text="Start Minimized"
-                               ToolTip="'Where's the window!?' &#10;That's right. The bottom right of your screen, with the other trayicons"/>
+                               ToolTip="'Where's the window!?'
+                               &#10;That's right. The bottom right of your screen, with the other trayicons"/>
                     <CheckBox x:Name="chkMin" Margin="0,3,0,0" Click="chkMin_Checked" />
                 </WrapPanel>
                 <WrapPanel>
                     <TextBlock Style="{StaticResource StandardText}" Text="Sound on/off" 
-                               ToolTip="Checked for sound, unchecked for silence. Can also be controlled from the trayicon. &#10;The sound can be whatever you want, as long as it is a Waveform Audio File.
-                               &#10; Add sound by placing any file named sound.wav in the program folder. Delete it for default sound."/>
+                               ToolTip="Checked for sound, unchecked for silence.
+                               &#10;The sound can be whatever you want, as long as it is a Waveform Audio File.
+                               &#10;Add sound by placing any file named sound.wav in the Config Folder. Delete it to use the default sound."/>
                     <CheckBox x:Name="chkSound" Margin="0,3,0,0" Click="chkSound_Checked" />
                 </WrapPanel>
                 <WrapPanel>
@@ -142,8 +143,7 @@
                     <Button x:Name="btnConfigPath" Style="{DynamicResource DefaultButton}" Content="Config Folder" Click="btnConfigPath_Click" />
                 </WrapPanel>
                 <TextBlock Style="{StaticResource StandardText}" Text="Need help? Hover over text to get descriptions,&#10;             or follow the Source Code link." FontSize="10" HorizontalAlignment="Center"
-                           ToolTip="This program minimizes into a trayicon. These are the small icons typically found
-                           &#10;in the bottom right of the screen.
+                           ToolTip="This program minimizes into a trayicon. These are the small icons typically found&#10;in the bottom right of the screen.
                            &#10;Trayicon controls:
                            &#10; - Left click displays the last recieved update
                            &#10; - Middle click opens the main window

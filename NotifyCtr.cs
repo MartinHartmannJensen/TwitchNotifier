@@ -30,8 +30,27 @@ namespace ArethruNotifier
         {
             TwitchDataHandler.Instance.FoundNewStreamEvent += new NewStreamFoundEventHandler((StreamsInfo si) =>
             {
-                DisplayNotification(si, ConfigMgnr.I.NotificationScreenTime);
-                PlaySound();
+                System.Xml.Linq.XElement result = null;
+                System.Xml.Linq.XElement tempresult;
+
+                foreach (var item in si.Streams)
+                {
+                    if (MiscOperations.TryGetFavourite(item.Channel.Name, out tempresult) > 0)
+                    {
+                        result = tempresult;
+                    }
+                }
+
+                if (result != null)
+                {
+                    DisplayNotification(si, int.Parse(result.Parent.Attribute("poptime").Value));
+                    PlaySound(result.Parent.Attribute("soundfile").Value);
+                }
+                else
+                {
+                    DisplayNotification(si, ConfigMgnr.I.NotificationScreenTime);
+                    PlaySound();
+                }
             });
         }
 
@@ -122,7 +141,23 @@ namespace ArethruNotifier
                     player = new System.Media.SoundPlayer(Properties.Resources.nSound);
                     player.Play();
                 }
-                //System.Media.SystemSounds.Asterisk.Play();
+            }
+        }
+
+        public void PlaySound(string favouriteSound)
+        {
+            if (ConfigMgnr.I.PlaySound)
+            {
+                try
+                {
+                    player = new System.Media.SoundPlayer(ConfigMgnr.I.FolderPath + @"\group sounds\" + favouriteSound);
+                    player.Play();
+                }
+                catch (System.IO.FileNotFoundException)
+                {
+                    player = new System.Media.SoundPlayer(Properties.Resources.nSound);
+                    player.Play();
+                }
             }
         }
 

@@ -4,6 +4,7 @@ using System.Net;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using Newtonsoft.Json;
+using System.Threading.Tasks;
 
 namespace ArethruNotifier
 {
@@ -40,6 +41,31 @@ namespace ArethruNotifier
                 if (response.IsSuccessStatusCode)
                 {
                     var data = JsonConvert.DeserializeObject<StreamsInfo>(response.Content.ReadAsStringAsync().Result);
+
+                    return data;
+                }
+                return new StreamsInfo() { IsSucces = false, DebugMessage = "GET /streams/followed   -   error: " + response.StatusCode.ToString() };
+            }
+            catch (System.ArgumentNullException) { }
+            catch (System.Net.WebException) { }
+            catch (System.Net.Http.HttpRequestException) { }
+            catch (System.Net.Sockets.SocketException) { }
+            catch (System.AggregateException) { }
+            return new StreamsInfo() { IsSucces = false };
+        }
+
+        public static async Task<StreamsInfo> GetLiveStreamsTask()
+        {
+            try
+            {
+                HttpClient client = new HttpClient();
+                client.BaseAddress = new Uri("https://api.twitch.tv/kraken/streams/followed");
+                client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                HttpResponseMessage response = await client.GetAsync("?oauth_token=" + userToken);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    var data = JsonConvert.DeserializeObject<StreamsInfo>(await response.Content.ReadAsStringAsync());
 
                     return data;
                 }

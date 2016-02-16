@@ -117,10 +117,6 @@ namespace ArethruNotifier
                 Out = "Follows tab populated";
             });
 
-            oneliners["SCMD"] = new Action(() => {
-                System.Diagnostics.Process.Start(@"C:\Users\Martin-PC\Desktop\streamstart.cmd", "somechannel");
-            });
-
             oneliners["SOUND"] = new Action(() => {
                 NotifyCtr.Instance.PlaySound();
             });
