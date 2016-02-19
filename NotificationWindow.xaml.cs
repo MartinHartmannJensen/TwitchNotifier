@@ -18,6 +18,11 @@ namespace ArethruNotifier
             SetPosition();
             this.TextTime.Text = "recieved at " + TwitchDataHandler.Instance.TimeRecieved.ToShortTimeString();
             btnClose.Effect = null;
+
+            this.Closing += new System.ComponentModel.CancelEventHandler((object sender, System.ComponentModel.CancelEventArgs e) =>
+            {
+                NotifyCtr.Instance.StopSound();
+            });
         }
 
         public void SetPosition()
@@ -35,7 +40,6 @@ namespace ArethruNotifier
 
         private void btnClose_Click(object sender, RoutedEventArgs e)
         {
-            NotifyCtr.Instance.StopSound();
             this.Close();
         }
 

@@ -55,7 +55,7 @@ namespace ArethruNotifier
         void InitializeTrayIcon()
         {
             trayicon = new WinForms.NotifyIcon();
-            trayicon.Icon = Properties.Resources.ATNlogo;
+            trayicon.Icon = Properties.Resources.ANlogo24bit;
             trayicon.BalloonTipText = "Arethru Twitch Notifier";
             trayicon.ContextMenu = new WinForms.ContextMenu(new WinForms.MenuItem[]
             {

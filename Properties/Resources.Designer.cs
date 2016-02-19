@@ -63,9 +63,9 @@ namespace ArethruNotifier.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Icon similar to (Icon).
         /// </summary>
-        internal static System.Drawing.Icon ATNlogo {
+        internal static System.Drawing.Icon ANlogo24bit {
             get {
-                object obj = ResourceManager.GetObject("ATNlogo", resourceCulture);
+                object obj = ResourceManager.GetObject("ANlogo24bit", resourceCulture);
                 return ((System.Drawing.Icon)(obj));
             }
         }

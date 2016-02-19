@@ -55,9 +55,9 @@ namespace ArethruNotifier
         /// Check if a stream exists within a group in the xml doc. 
         /// </summary>
         /// <param name="name">The stream to search for</param>
-        /// <param name="result">(System.Xml.Linq.XElement) The stream element with the tree info attached</param>
+        /// <param name="result"></param>
         /// <returns>Returns 1 if true, 0 if false.</returns>
-        public static int TryGetFavourite(string name, out XElement result)
+        public static int TryGetFavourite(string name, out FavouriteGroup result)
         {
             var xdoc = XDocument.Load(xmldocpath);
 
@@ -69,12 +69,72 @@ namespace ArethruNotifier
 
             if (bufferresult.Length > 0)
             {
-                result = bufferresult[0];
+                var xgp = bufferresult[0].Parent;
+                var _result = new FavouriteGroup();
+                int tempint;
+                string tempints;
+
+                _result.Name = xgp.Attribute("name").Value;
+                _result.Soundfile = xgp.Attribute("soundfile").Value;
+                tempints = xgp.Attribute("priority").Value;
+                if (int.TryParse(tempints, out tempint))
+                    _result.Priority = tempint;
+                tempints = xgp.Attribute("poptime").Value;
+                if (int.TryParse(tempints, out tempint))
+                    _result.Poptime = tempint;
+
+                result = _result;
                 return 1;
             }
 
             result = null;
             return 0;
         }
+    }
+
+    public class FavouriteGroup
+    {
+        string name = "";
+        public string Name
+        {
+            get { return name; }
+            set
+            {
+                if (value != null)
+                    name = value;
+            }
+        }
+
+        int priority = -1;
+        public int Priority {
+            get { return priority; }
+            set
+            {
+                priority = value;
+            }
+        }
+
+        string soundfile = "nofile";
+        public string Soundfile
+        {
+            get { return soundfile; }
+            set
+            {
+                if (value != null)
+                    soundfile = value;
+            }
+        }
+
+        int poptime = 60;
+        public int Poptime
+        {
+            get { return poptime; }
+            set
+            {
+                poptime = value;
+            }
+        }
+
+        public FavouriteGroup() { }
     }
 }
