@@ -28,31 +28,17 @@ namespace ArethruNotifier
 
         private NotifyCtr()
         {
-            TwitchDataHandler.Instance.FoundNewStreamEvent += new NewStreamFoundEventHandler((StreamsInfo si) =>
+            TwitchDataHandler.Instance.FoundNewStreamEvent += new NewStreamFoundEventHandler((StreamsInfo si, FavouriteGroup fg) =>
             {
-                FavouriteGroup resultGroup = null;
-                FavouriteGroup tempresult;
-
-                foreach (var item in si.Streams)
-                {
-                    if (MiscOperations.TryGetFavourite(item.Channel.Name, out tempresult) > 0)
-                    {
-                        if (resultGroup == null)
-                            resultGroup = tempresult;
-                        else if (resultGroup.Priority < tempresult.Priority)
-                            resultGroup = tempresult;
-                    }
-                }
-
-                if (resultGroup != null)
-                {
-                    DisplayNotification(si, resultGroup.Poptime);
-                    PlaySound(resultGroup.Soundfile);
-                }
-                else
+                if (fg == null)
                 {
                     DisplayNotification(si, ConfigMgnr.I.NotificationScreenTime);
                     PlaySound();
+                }
+                else
+                {
+                    DisplayNotification(si, fg.Poptime);
+                    PlaySound(fg.Soundfile);
                 }
             });
         }

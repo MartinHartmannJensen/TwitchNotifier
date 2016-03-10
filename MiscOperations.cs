@@ -59,6 +59,7 @@ namespace ArethruNotifier
         /// <returns>Returns 1 if true, 0 if false.</returns>
         public static int TryGetFavourite(string name, out FavouriteGroup result)
         {
+            // TODO add error handling for missing doc
             var xdoc = XDocument.Load(xmldocpath);
 
             var query = from x in xdoc.Root.Elements("group").Elements("stream")

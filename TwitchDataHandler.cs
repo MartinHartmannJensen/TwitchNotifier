@@ -4,7 +4,7 @@ using System.Linq;
 
 namespace ArethruNotifier
 {
-    public delegate void NewStreamFoundEventHandler(StreamsInfo streamsInfo);
+    public delegate void NewStreamFoundEventHandler(StreamsInfo streamsInfo, FavouriteGroup group);
 
     public class TwitchDataHandler
     {
@@ -67,12 +67,23 @@ namespace ArethruNotifier
         /// </summary>
         private void CompareInfo(StreamsInfo si)
         {
+            var newstreams = new List<Channel>();
+            FavouriteGroup tempgroup = null;
+            FavouriteGroup returngroup = null;
+
             if (CurrentInfo == null)
             {
-                CurrentInfo = si;
-                TimeRecieved = DateTime.Now;
-                if (FoundNewStreamEvent != null)
-                    FoundNewStreamEvent(si);
+                foreach (var item in si.Streams)
+                {
+                    if (MiscOperations.TryGetFavourite(item.Channel.Name, out tempgroup) > 0)
+                    {
+                        if (returngroup == null)
+                            returngroup = tempgroup;
+                        else if (returngroup.Priority < tempgroup.Priority)
+                            returngroup = tempgroup;
+                    }
+                }
+                RaiseEvent(si, returngroup);
                 return;
             }
 
@@ -80,14 +91,35 @@ namespace ArethruNotifier
             {
                 if (!CurrentInfo.Streams.Exists(x => x.Channel.Name.Equals(item.Channel.Name)))
                 {
-                    CurrentInfo = si;
-                    TimeRecieved = DateTime.Now;
-                    if (FoundNewStreamEvent != null)
-                        FoundNewStreamEvent(si);
-                    return;
+                    newstreams.Add(item.Channel);
                 }
             }
+
+            if (newstreams.Count > 0)
+            {
+                foreach (var item in newstreams)
+                {
+                    if (MiscOperations.TryGetFavourite(item.Name, out tempgroup) > 0)
+                    {
+                        if (returngroup == null)
+                            returngroup = tempgroup;
+                        else if (returngroup.Priority < tempgroup.Priority)
+                            returngroup = tempgroup;
+                    }
+                }
+                RaiseEvent(si, returngroup);
+                return;
+            }
+
             CurrentInfo = si;
+        }
+
+        private void RaiseEvent(StreamsInfo si, FavouriteGroup fg)
+        {
+            CurrentInfo = si;
+            TimeRecieved = DateTime.Now;
+            if (FoundNewStreamEvent != null)
+                FoundNewStreamEvent(si, fg);
         }
 
         private StreamsInfo SortByTime(StreamsInfo si)
