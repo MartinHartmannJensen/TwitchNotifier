@@ -22,6 +22,11 @@ namespace ArethruNotifier
             DefaultCollection["PlaySound"] = "True";
             DefaultCollection["DisplayMonitor"] = "0";
             DefaultCollection["OpenStreamWithScript"] = "False";
+            DefaultCollection["Color_MainPanel"] = "0";
+            DefaultCollection["Color_SubPanel"] = "0";
+            DefaultCollection["Color_DefaultText"] = "0";
+            DefaultCollection["Color_Highlight"] = "0";
+            DefaultCollection["Color_BtnBG"] = "0";
             RunStartup();
         }
         public string UserToken { get { return Get("UserToken"); } set { Set("UserToken", value); } }
@@ -33,6 +38,11 @@ namespace ArethruNotifier
         public bool PlaySound { get { return bool.Parse(Get("PlaySound")); } set { Set("PlaySound", value); } }
         public int DisplayMonitor { get { return int.Parse(Get("DisplayMonitor")); } set { Set("DisplayMonitor", value); } }
         public bool OpenStreamWithScript { get { return bool.Parse(Get("OpenStreamWithScript")); } set { Set("OpenStreamWithScript", value); } }
+        public string Color_MainPanel { get { return Get("Color_MainPanel"); } set { Set("Color_MainPanel", value); } }
+        public string Color_SubPanel { get { return Get("Color_SubPanel"); } set { Set("Color_SubPanel", value); } }
+        public string Color_DefaultText { get { return Get("Color_DefaultText"); } set { Set("Color_DefaultText", value); } }
+        public string Color_Highlight { get { return Get("Color_Highlight"); } set { Set("Color_Highlight", value); } }
+        public string Color_BtnBG { get { return Get("Color_BtnBG"); } set { Set("Color_BtnBG", value); } }
     }
 
   

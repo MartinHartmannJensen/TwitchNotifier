@@ -12,7 +12,9 @@ namespace ArethruNotifier
         public static string RunFileName = "ArethruNotifier.exe";
         public static string StreamFileName = "StreamStart.cmd";
 
-        static string xmldocpath = ConfigMgnr.I.FolderPath + @"\favourites.xml";
+        static string xmldocpath = ConfigMgnr.I.FolderPath + @"\favorites.xml";
+        static string xmlfile = "favorites.xml";
+        static string xmlFolder = "group sounds";
 
 
 
@@ -30,8 +32,7 @@ namespace ArethruNotifier
                     sw.WriteLine("ECHO passed parameter: %1");
                     sw.WriteLine("SET /p stopper=Press To Continue");
                     sw.WriteLine("");
-                    sw.WriteLine(":: Example of how this could look if you have livestreamer installed and added to your path");
-                    sw.WriteLine(":: livestreamer twitch.tv/%1 source");
+                    sw.WriteLine(":: This is for those who wants to specifically target a certain program to view the stream with");
                 }
             }
         }
@@ -51,6 +52,31 @@ namespace ArethruNotifier
             rk.Close();
         }
 
+
+
+        public static void CreateFavoriteConfig(string FolderPath)
+        {
+            Directory.CreateDirectory(string.Format(@"{0}\{1}", FolderPath, xmlFolder));
+            if (!File.Exists(string.Format(@"{0}\{1}", FolderPath, xmlfile)))
+            {
+                using (StreamWriter sw = new StreamWriter(FolderPath + @"\" + xmlfile))
+                {
+                    sw.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
+                    sw.WriteLine("<favorites>");
+                    sw.WriteLine("  <group name=\"one group of streamers\" priority=\"9001\" soundfile=\"airhorn.wav\" poptime=\"420\">");
+                    sw.WriteLine("      <stream>some channel name</stream>");
+                    sw.WriteLine("      <stream>some other channel</stream>");
+                    sw.WriteLine("  </group>");
+                    sw.WriteLine("</favorites>");
+                    sw.WriteLine("<!--");
+                    sw.WriteLine("Name: A name");
+                    sw.WriteLine("Priority: The group with the highest number takes priority for playing its sound");
+                    sw.WriteLine("Soundfile: These go in 'group sounds' and must be a .wav file");
+                    sw.WriteLine("Poptime: How long the popup should stay up for the group");
+                    sw.WriteLine("-->");
+                }
+            }
+        }
         /// <summary>
         /// Check if a stream exists within a group in the xml doc. 
         /// </summary>

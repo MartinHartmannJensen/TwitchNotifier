@@ -93,7 +93,7 @@ namespace ArethruNotifier
 
                 var thisuser = JsonConvert.DeserializeObject<User>(response.Content.ReadAsStringAsync().Result);
 
-                HttpResponseMessage response2 = client.GetAsync("/kraken/users/" + thisuser.Name + "/follows/channels?limit=100").Result;
+                HttpResponseMessage response2 = client.GetAsync("/kraken/users/" + thisuser.Name + "/follows/channels?limit=100&oauth_token=" + userToken).Result;
 
                 if (response2.IsSuccessStatusCode)
                     return JsonConvert.DeserializeObject<Follows>(response2.Content.ReadAsStringAsync().Result);

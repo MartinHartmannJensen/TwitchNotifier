@@ -32,13 +32,28 @@ namespace ArethruNotifier
             InitializeTrayIcon();
             Set_SettingsUI();
             DoStartupFunctions();
+
+
+            if (!ConfigMgnr.I.Color_MainPanel.Equals("0"))
+                Resources["Color_MainPanel"] = (SolidColorBrush)(new BrushConverter().ConvertFrom(ConfigMgnr.I.Color_MainPanel));
+            if (!ConfigMgnr.I.Color_SubPanel.Equals("0"))
+                Resources["Color_SubPanel"] = (SolidColorBrush)(new BrushConverter().ConvertFrom(ConfigMgnr.I.Color_SubPanel));
+            if (!ConfigMgnr.I.Color_DefaultText.Equals("0"))
+                Resources["Color_DefaultText"] = (SolidColorBrush)(new BrushConverter().ConvertFrom(ConfigMgnr.I.Color_DefaultText));
+            if (!ConfigMgnr.I.Color_Highlight.Equals("0"))
+                Resources["Color_Highlight"] = (SolidColorBrush)(new BrushConverter().ConvertFrom(ConfigMgnr.I.Color_Highlight));
+            if (!ConfigMgnr.I.Color_BtnBG.Equals("0"))
+                Resources["Color_BtnBG"] = (SolidColorBrush)(new BrushConverter().ConvertFrom(ConfigMgnr.I.Color_BtnBG));
         }
         
         #region Misc. Methods
 
+        
+
         void DoStartupFunctions()
         {
             MiscOperations.CreateStreamLaunchFile(ConfigMgnr.I.FolderPath);
+            MiscOperations.CreateFavoriteConfig(ConfigMgnr.I.FolderPath);
             MiscOperations.SetRegistryStartup(ConfigMgnr.I.StartWithWindows);
 
             if (!ConfigMgnr.I.OfflineMode)
@@ -69,6 +84,8 @@ namespace ArethruNotifier
             trayiconSound = trayicon.ContextMenu.MenuItems[3];
             trayiconMonitor = trayicon.ContextMenu.MenuItems[0];
             trayicon.MouseUp += trayicon_Click;
+
+            trayicon.Visible = true;
         }
 
         void Set_SettingsUI()
@@ -80,6 +97,7 @@ namespace ArethruNotifier
             chkMin.IsChecked = ConfigMgnr.I.StartMinimized;
             chkSound.IsChecked = ConfigMgnr.I.PlaySound;
             trayiconSound.Checked = ConfigMgnr.I.PlaySound;
+            chkScript.IsChecked = ConfigMgnr.I.OpenStreamWithScript;
 
 
             //Monitor selection setup
@@ -150,6 +168,7 @@ namespace ArethruNotifier
         {
             TwitchDataHandler.Instance.UpdateInfo();
             NotifyCtr.Instance.DisplayNotification(TwitchDataHandler.Instance.CurrentInfo, ConfigMgnr.I.NotificationScreenTime);
+            NotifyCtr.Instance.StopSound();
         }
 
         private void trayicon_OpenMainWindow(object sender, EventArgs e)
@@ -157,7 +176,7 @@ namespace ArethruNotifier
             this.Show();
             this.ShowInTaskbar = true;
             this.WindowState = System.Windows.WindowState.Normal;
-            trayicon.Visible = false;
+            //trayicon.Visible = false;
         }
 
         private void trayicon_Exit(object sender, EventArgs e)
@@ -212,7 +231,7 @@ namespace ArethruNotifier
         {
             if (System.Windows.WindowState.Minimized == this.WindowState)
             {
-                trayicon.Visible = true;
+                //trayicon.Visible = true;
                 this.Hide();
                 this.ShowInTaskbar = false;
             }
@@ -280,7 +299,7 @@ namespace ArethruNotifier
         {
             var s = (TextBlock)sender;
             var defCol = (SolidColorBrush)FindResource("Color_DefaultText");
-            var actCol = (SolidColorBrush)FindResource("Color_ActivePurple");
+            var actCol = (SolidColorBrush)FindResource("Color_Highlight");
             TextBlock[] navBtns = { btn_Follows, btn_Settings };
 
             for (int i = 0; i < navBtns.Length; i++)

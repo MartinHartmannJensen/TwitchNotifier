@@ -3,18 +3,14 @@
                     xmlns:local="clr-namespace:ArethruNotifier">
 
 
-    <SolidColorBrush x:Key="Color_Panel1" Color="#FF3A3A3A" />
-    <SolidColorBrush x:Key="Color_Panel2" Color="#FF575757" />
-    <SolidColorBrush x:Key="Color_Panel3" Color="#FF25262A" />
-    <SolidColorBrush x:Key="Color_Panel4" Color="#FF323742" />
-    <SolidColorBrush x:Key="Color_ActivePurple" Color="#FF891290" />
+    <SolidColorBrush x:Key="Color_MainPanel" Color="#FF25262A" />
+    <SolidColorBrush x:Key="Color_SubPanel" Color="#FF323742" />
     <SolidColorBrush x:Key="Color_DefaultText" Color="White" />
-    <SolidColorBrush x:Key="Color_Highlight" Color="Red" />
-    <Color x:Key="Col_DefaultText" R="255" G="255" B="255" A="33" ScA="123" ScB="123" ScG="123" ScR="123" />
-    <SolidColorBrush x:Key="Color_CustomBtnBG" Color="Gray" />
+    <SolidColorBrush x:Key="Color_Highlight" Color="#FF891290" />
+    <SolidColorBrush x:Key="Color_BtnBG" Color="#FF707070" />
 
     <Style x:Key="StandardText" TargetType="{x:Type TextBlock}" BasedOn="{x:Null}">
-        <Setter Property="Foreground" Value="{StaticResource Color_DefaultText}" />
+        <Setter Property="Foreground" Value="{DynamicResource Color_DefaultText}" />
         <Setter Property="Margin" Value="1,0,9,0" />
         <Setter Property="Cursor" Value="Help" />
         <Setter Property="ToolTipService.ShowDuration" Value="99999" />
@@ -24,7 +20,9 @@
         <Setter Property="OverridesDefaultStyle" Value="True" />
         <Setter Property="MinHeight" Value="1" />
         <Setter Property="MinWidth" Value="1" />
-        <Setter Property="Foreground" Value="{StaticResource Color_DefaultText}" />
+        <Setter Property="Foreground" Value="{DynamicResource Color_DefaultText}" />
+        <Setter Property="Background" Value="{DynamicResource Color_BtnBG}" />
+        <Setter Property="BorderBrush" Value="{DynamicResource Color_DefaultText}" />
         <Setter Property="SnapsToDevicePixels" Value="True" />
         <Setter Property="Margin" Value="3,1" />
 
@@ -32,33 +30,66 @@
             <Setter.Value>
                 <ControlTemplate TargetType="Button">
                     <Border TextBlock.Foreground="{TemplateBinding Foreground}" x:Name="Border"
-                CornerRadius="2" BorderThickness="1">
-                        <Border.Background>
-                            <SolidColorBrush Color="Gray" />
-                        </Border.Background>
-
-                        <Border.BorderBrush>
-                            <SolidColorBrush Color="White" />
-                        </Border.BorderBrush>
+                CornerRadius="2" BorderThickness="1" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}">
 
                         <ContentPresenter Margin="2"
                             HorizontalAlignment="Center"
                             VerticalAlignment="Center"
                             RecognizesAccessKey="True" />
                     </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="Background" Value="{DynamicResource Color_DefaultText}" />
+                            <Setter Property="Foreground" Value="{DynamicResource Color_BtnBG}" />
+                            <Setter Property="BorderBrush" Value="{DynamicResource Color_BtnBG}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>
     </Style>
-    
+
+    <Style x:Key="Button2" TargetType="{x:Type Button}">
+        <Setter Property="OverridesDefaultStyle" Value="True" />
+        <Setter Property="MinHeight" Value="1" />
+        <Setter Property="MinWidth" Value="1" />
+        <Setter Property="Foreground" Value="{DynamicResource Color_DefaultText}" />
+        <Setter Property="Background" Value="Transparent" />
+        <Setter Property="BorderBrush" Value="Transparent" />
+        <Setter Property="SnapsToDevicePixels" Value="True" />
+        <Setter Property="Margin" Value="3,1" />
+
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="Button">
+                    <Border TextBlock.Foreground="{TemplateBinding Foreground}" x:Name="Border"
+                CornerRadius="2" BorderThickness="1" Background="{TemplateBinding Background}" BorderBrush="{TemplateBinding BorderBrush}">
+
+                        <ContentPresenter Margin="2"
+                            HorizontalAlignment="Center"
+                            VerticalAlignment="Center"
+                            RecognizesAccessKey="True" />
+                    </Border>
+
+                    <ControlTemplate.Triggers>
+                        <Trigger Property="IsMouseOver" Value="True">
+                            <Setter Property="BorderBrush" Value="{DynamicResource Color_DefaultText}" />
+                        </Trigger>
+                    </ControlTemplate.Triggers>
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+
     <!-- Navbar -->
     <Style x:Key="NavbarBorder" TargetType="Border">
         <Setter Property="BorderThickness" Value="0,2" />
         <Setter Property="CornerRadius" Value="3" />
-        <Setter Property="Background" Value="{DynamicResource Color_Panel4}" />
-        <Setter Property="BorderBrush" Value="Black" />
+        <Setter Property="Background" Value="{DynamicResource Color_SubPanel}" />
+        <Setter Property="BorderBrush" Value="Transparent" />
         <Setter Property="Margin" Value="0,0,0,9" />
-        <Setter Property="Height" Value="34" />
+        <Setter Property="Height" Value="40" />
         <Setter Property="VerticalAlignment" Value="Top" />
 
         <Style.Resources>

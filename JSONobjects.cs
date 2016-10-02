@@ -29,6 +29,10 @@ namespace ArethruNotifier
         [JsonProperty("created_at")]
         public DateTime CreatedAt { get; set; }
 
+        public string CreatedAt_short { get {
+                return CreatedAt.ToShortTimeString();
+            } }
+
         [JsonProperty("channel")]
         public Channel Channel { get; set; }
     }

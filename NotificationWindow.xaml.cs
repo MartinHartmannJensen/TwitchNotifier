@@ -3,6 +3,7 @@ using System.Windows.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using WinForms = System.Windows.Forms;
+using System.Windows.Media;
 
 namespace ArethruNotifier
 {
@@ -23,6 +24,17 @@ namespace ArethruNotifier
             {
                 NotifyCtr.Instance.StopSound();
             });
+
+            if (!ConfigMgnr.I.Color_MainPanel.Equals("0"))
+                Resources["Color_MainPanel"] = (SolidColorBrush)(new BrushConverter().ConvertFrom(ConfigMgnr.I.Color_MainPanel));
+            if (!ConfigMgnr.I.Color_SubPanel.Equals("0"))
+                Resources["Color_SubPanel"] = (SolidColorBrush)(new BrushConverter().ConvertFrom(ConfigMgnr.I.Color_SubPanel));
+            if (!ConfigMgnr.I.Color_DefaultText.Equals("0"))
+                Resources["Color_DefaultText"] = (SolidColorBrush)(new BrushConverter().ConvertFrom(ConfigMgnr.I.Color_DefaultText));
+            if (!ConfigMgnr.I.Color_Highlight.Equals("0"))
+                Resources["Color_Highlight"] = (SolidColorBrush)(new BrushConverter().ConvertFrom(ConfigMgnr.I.Color_Highlight));
+            if (!ConfigMgnr.I.Color_BtnBG.Equals("0"))
+                Resources["Color_BtnBG"] = (SolidColorBrush)(new BrushConverter().ConvertFrom(ConfigMgnr.I.Color_BtnBG));
         }
 
         public void SetPosition()
@@ -52,16 +64,17 @@ namespace ArethruNotifier
         {
             ListView listV = (ListView)sender;
 
-            var myItem = (StreamsObj)listV.Items[listV.SelectedIndex];
+            var selected = (StreamsObj)listV.Items[listV.SelectedIndex];
+            string selectedName = selected.Channel.Name.ToLower();
 
             if (!ConfigMgnr.I.OpenStreamWithScript)
             {
-                System.Diagnostics.Process.Start("http://www.twitch.tv/" + myItem.Channel.Name);
+                System.Diagnostics.Process.Start("http://www.twitch.tv/" + selectedName);
             }
             else
             {
                 System.Diagnostics.Process.Start(string.Format(@"{0}\{1}", ConfigMgnr.I.FolderPath, MiscOperations.StreamFileName),
-                myItem.Channel.Name);
+                selectedName);
             }
             this.Close();
         }
