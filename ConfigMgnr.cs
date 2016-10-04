@@ -90,6 +90,7 @@ namespace CustomConfigProject.Base
         {
             if (PropertiesCollection.ContainsKey(prop))
                 return PropertiesCollection[prop];
+            PropertiesCollection[prop] = DefaultCollection[prop];
             return DefaultCollection[prop];
         }
 
@@ -102,12 +103,57 @@ namespace CustomConfigProject.Base
         // Write to config file
         public void Save()
         {
-            Directory.CreateDirectory(FolderPath);
-            using (StreamWriter sr = new StreamWriter(ConfigPath))
+            //List of lines to write to config
+            List<string> savetheselines = new List<string>();
+            if (File.Exists(ConfigPath))
             {
+                Dictionary<string, string> PropertiesCollectionCopy = new Dictionary<string, string>();
+                //Create this List ^
                 foreach (var item in PropertiesCollection)
                 {
-                    sr.WriteLine(item.Key + "=" + item.Value);
+                    PropertiesCollectionCopy.Add(item.Key, item.Value);
+                }
+
+                //add lines starting with ;, add existing key-value pairs to their position, and remove them from the dictonary
+                foreach (var item in File.ReadLines(ConfigPath))
+                {
+                    if(item.StartsWith(";"))
+                    {
+                        savetheselines.Add(item);
+                        continue;
+                    }
+
+                    string[] key_value = Regex.Split(item, @"\s+=\s+|=\s+|\s+=|=");
+
+                    if (PropertiesCollectionCopy.ContainsKey(key_value[0]))
+                    {
+                        savetheselines.Add(key_value[0] + "=" + PropertiesCollectionCopy[key_value[0]]);
+                        PropertiesCollectionCopy.Remove(key_value[0]);
+                    }
+                }
+
+                //add any missing key-value pairs to savetheselines
+                foreach (var item in PropertiesCollectionCopy)
+                {
+                    savetheselines.Add(item.Key + "=" + item.Value);
+                }
+            }
+
+
+            //OLDCODE
+            //Directory.CreateDirectory(FolderPath);
+            //using (StreamWriter sr = new StreamWriter(ConfigPath))
+            //{
+            //    foreach (var item in PropertiesCollection)
+            //    {
+            //        sr.WriteLine(item.Key + "=" + item.Value);
+            //    }
+            //}
+            using (StreamWriter sr = new StreamWriter(ConfigPath))
+            {
+                foreach (var item in savetheselines)
+                {
+                    sr.WriteLine(item);
                 }
             }
         }
@@ -117,6 +163,9 @@ namespace CustomConfigProject.Base
         {
             foreach (string item in File.ReadLines(ConfigPath))
             {
+                if (item.StartsWith(";"))
+                    continue;
+
                 string[] key_value = Regex.Split(item, @"\s+=\s+|=\s+|\s+=|=");
                 if (DefaultCollection.ContainsKey(key_value[0]))
                     PropertiesCollection[key_value[0]] = key_value[1];

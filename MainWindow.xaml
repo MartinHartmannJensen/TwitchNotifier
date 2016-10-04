@@ -137,7 +137,7 @@
                                ToolTip="For systems utilizing multiple monitors. Select which monitor the notification window should appear on. &#10;Indexing starts at 0 for the primary screen."/>
                     <ComboBox x:Name="dropMonitorSelect" SelectionChanged="dropMonitorSelect_SelectionChanged" Margin="0,0,0,5" />
                 </WrapPanel>
-                <Separator Margin="0,0,0,9" Width="200" />
+                <Separator Margin="0,0,0,9" Width="200" Background="{DynamicResource Color_BtnBG}" />
                 <WrapPanel>
                     <Button x:Name="btnRestart" Style="{DynamicResource DefaultButton}" Content="Restart" Click="btnRestart_Click" />
                     <Button x:Name="btnConfigPath" Style="{DynamicResource DefaultButton}" Content="Config Folder" Click="btnConfigPath_Click" />
