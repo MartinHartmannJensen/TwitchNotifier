@@ -2,158 +2,103 @@
 using System.Collections.Generic;
 using System.Linq;
 
-namespace ArethruNotifier
-{
-    public delegate void NewStreamFoundEventHandler(StreamsInfo streamsInfo, FavouriteGroup group);
-
-    public class TwitchDataHandler
-    {
-        private static TwitchDataHandler instance = null;
-
-        public static TwitchDataHandler Instance
-        {
-            get
-            {
-                if (instance == null)
-                    instance = new TwitchDataHandler();
-                return instance;
-            }
-        }
-
-        private TwitchDataHandler() { }
-
+namespace ArethruNotifier {
+    public class TwitchDataHandler {
 
         private StreamsInfo currentInfo = null;
-        public StreamsInfo CurrentInfo { get { return currentInfo; } private set { currentInfo = value; } }
+        public StreamsInfo CurrentInfo { get { return currentInfo; } }
 
-        public StreamsInfo TimeSortedCurrentInfo { get { return SortByTime(currentInfo); } }
+        private NotifyCtr NotifyObj = ConfigMgnr.I.NotifyController;
+        private Object threadLock = new Object();
 
-        private DateTime timeRecieved;
-        public DateTime TimeRecieved { get { return timeRecieved; } private set { timeRecieved = value; } }
-
-        public NewStreamFoundEventHandler FoundNewStreamEvent;
-
-        /// <summary>
-        /// Calls RESTcall and blocks the Thread before updating currentInfo
-        /// </summary>
-        public bool UpdateInfo()
-        {
-            var tempSI = WebComm.GetLiveStreams();
-
-            if (tempSI.IsSucces)
-            {
-                CurrentInfo = tempSI;
-                return true;
-            }
-            return false;
+        public enum UpdateMode {
+            Compare,
+            Force
         }
 
         /// <summary>
-        /// Updates currentInfo with the passed parameter variable
+        /// Calls the twitch api, and displays a notification if updates are found.
         /// </summary>
-        /// <param name="si"></param>
-        public void UpdateAndCompare(StreamsInfo si)
-        {
-            var tempSI = si;
+        /// <param name="mode">'Force' is a basic update. The notification window will always be shown with the gotten info.
+        /// 'Compare' is the smart mode that only shows a notification, if something new has occurred</param>
+        public async void UpdateLive(UpdateMode mode) {
+            var tempSi = await APIcalls.GetLiveStreamsTask();
 
-            if (tempSI.IsSucces)
-            {
-                CompareInfo(tempSI);
+            lock (threadLock) {
+                if (!tempSi.IsSuccess) {
+                    return;
+                }
+
+                if (mode == UpdateMode.Force) {
+                    currentInfo = tempSi;
+                    NotifyObj.DisplayNotificationWindow(tempSi);
+                }
+                else if (mode == UpdateMode.Compare) {
+                    CompareInfo(tempSi);
+                }
             }
         }
 
         /// <summary>
-        /// Compares the new StreamsInfo with the current one. Invokes NotifyEvent if new entries are found.
+        /// Compares the new StreamsInfo with the current one. Requests a notification window if new entries are found.
         /// </summary>
-        private void CompareInfo(StreamsInfo si)
-        {
+        private void CompareInfo(StreamsInfo si) {
             var newstreams = new List<Channel>();
             FavouriteGroup tempgroup = null;
             FavouriteGroup returngroup = null;
 
-            if (CurrentInfo == null)
-            {
-                foreach (var item in si.Streams)
-                {
-                    if (MiscOperations.TryGetFavourite(item.Channel.Name, out tempgroup) > 0)
-                    {
-                        if (returngroup == null)
-                            returngroup = tempgroup;
-                        else if (returngroup.Priority < tempgroup.Priority)
-                            returngroup = tempgroup;
+            // Check if it is a first-time update (currentInfo == null)
+            if (currentInfo != null) {
+                foreach (var item in si.Streams) {
+                    if (!currentInfo.Streams.Exists(x => x.Channel.Name.Equals(item.Channel.Name))) {
+                        newstreams.Add(item.Channel);
                     }
                 }
-                RaiseEvent(si, returngroup);
+            }
+            else {
+                newstreams = si.Streams.Select(x => x.Channel).ToList();
+            }
+
+            // If no new streams detected: Update existing info and escape the function
+            if (newstreams.Count == 0) {
+                currentInfo = si;
                 return;
             }
 
-            foreach (var item in si.Streams)
-            {
-                if (!CurrentInfo.Streams.Exists(x => x.Channel.Name.Equals(item.Channel.Name)))
-                {
-                    newstreams.Add(item.Channel);
+            foreach (var item in newstreams) {
+                if (MiscOperations.TryGetFavourite(item.Name, out tempgroup)) {
+                    if (returngroup == null)
+                        returngroup = tempgroup;
+                    else if (returngroup.Priority < tempgroup.Priority)
+                        returngroup = tempgroup;
                 }
             }
 
-            if (newstreams.Count > 0)
-            {
-                foreach (var item in newstreams)
-                {
-                    if (MiscOperations.TryGetFavourite(item.Name, out tempgroup) > 0)
-                    {
-                        if (returngroup == null)
-                            returngroup = tempgroup;
-                        else if (returngroup.Priority < tempgroup.Priority)
-                            returngroup = tempgroup;
-                    }
-                }
-                RaiseEvent(si, returngroup);
-                return;
+            currentInfo = si;
+            if (returngroup == null) {
+                NotifyObj.DisplayNotificationWindow(si);
             }
-
-            CurrentInfo = si;
+            else {
+                NotifyObj.DisplayNotificationWindow(si, returngroup);
+            }
         }
 
-        private void RaiseEvent(StreamsInfo si, FavouriteGroup fg)
-        {
-            CurrentInfo = si;
-            TimeRecieved = DateTime.Now;
-            if (FoundNewStreamEvent != null)
-                FoundNewStreamEvent(si, fg);
-        }
+        public Tuple<List<Follow>, List<Follow>> GetFollows() {
+            var follows = APIcalls.GetFollowedChannels();
 
-        private StreamsInfo SortByTime(StreamsInfo si)
-        {
-            List<StreamsObj> sortedList = si.Streams.OrderByDescending(x => x.CreatedAt).ToList();
-
-            return new StreamsInfo() { Streams = sortedList, IsSucces = true };
-        }
-
-        public Tuple<List<Follow>, List<Follow>> GetFollows()
-        {
-            var follows = WebComm.GetFollowedChannels();
-
-            if (!follows.IsSucces)
-            {
+            if (!follows.IsSucces || currentInfo == null) {
                 return null;
             }
-
-            if (CurrentInfo == null)
-                if (!UpdateInfo())
-                    return null;
 
             List<Follow> onlineF = new List<Follow>();
 
             List<Follow> offlineF = new List<Follow>();
 
-            foreach (var item in follows.List)
-            {
-                if (TwitchDataHandler.Instance.CurrentInfo.Streams.Exists(x => x.Channel.Name.Equals(item.Channel.Name)))
-                {
+            foreach (var item in follows.List) {
+                if (currentInfo.Streams.Exists(x => x.Channel.Name.Equals(item.Channel.Name))) {
                     onlineF.Add(item);
                 }
-                else
-                {
+                else {
                     offlineF.Add(item);
                 }
             }

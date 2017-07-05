@@ -6,83 +6,72 @@ using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 
-namespace ArethruNotifier
-{
-    public static class WebComm
-    {
+namespace ArethruNotifier {
+    public static class APIcalls {
         static string clientID = MyClientID.clientID;
         static string clientSecret = MyClientID.clientSecret;
         static string userToken = ConfigMgnr.I.UserToken;
         static string redirectURI = "http://localhost:4515/oauth2/authorize/arethrunotifier";
         static string scopes = "user_read";
 
-        static string AuthURL = @"https://api.twitch.tv/kraken/oauth2/authorize" +
+        public static string AuthURL = @"https://api.twitch.tv/kraken/oauth2/authorize" +
                                 "?response_type=code" +
                                 "&client_id=" + clientID +
                                 "&redirect_uri=" + redirectURI +
                                 "&scope=" + scopes +
-                                "&state=somestate123";
+                                "&state=somestate123&force_verify=true";
 
         static string htmlResponseSuccess = "<HTML><BODY style='text-align:center'>"
-            + "<h3>Success!</h3><br>" 
-            + "All you need to do now, is restart the application. (Using the restart button or closing and opening again will both work)<br>"
-            + "And that's it, you should be set. Should you encounter any issues, then there is the issue tracker on github."
-            + "</BODY></HTML>";
+            + "<h3>Success!</h3><br>"
+            + "Settings saved. Restarting application."
+            +"</BODY></HTML>";
 
-        public static StreamsInfo GetLiveStreams()
-        {
-            try
-            {
+        public static StreamsInfo GetLiveStreams() {
+            try {
                 HttpClient client = new HttpClient();
                 client.BaseAddress = new Uri("https://api.twitch.tv/kraken/streams/followed");
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 HttpResponseMessage response = client.GetAsync("?oauth_token=" + userToken).Result;
 
-                if (response.IsSuccessStatusCode)
-                {
+                if (response.IsSuccessStatusCode) {
                     var data = JsonConvert.DeserializeObject<StreamsInfo>(response.Content.ReadAsStringAsync().Result);
 
                     return data;
                 }
-                return new StreamsInfo() { IsSucces = false, DebugMessage = "GET /streams/followed   -   error: " + response.StatusCode.ToString() };
+                return new StreamsInfo() { IsSuccess = false, DebugMessage = "GET /streams/followed   -   error: " + response.StatusCode.ToString() };
             }
             catch (System.ArgumentNullException) { }
             catch (System.Net.WebException) { }
             catch (System.Net.Http.HttpRequestException) { }
             catch (System.Net.Sockets.SocketException) { }
             catch (System.AggregateException) { }
-            return new StreamsInfo() { IsSucces = false };
+            return new StreamsInfo() { IsSuccess = false };
         }
 
-        public static async Task<StreamsInfo> GetLiveStreamsTask()
-        {
-            try
-            {
+        public static async Task<StreamsInfo> GetLiveStreamsTask() {
+            try {
                 HttpClient client = new HttpClient();
                 client.BaseAddress = new Uri("https://api.twitch.tv/kraken/streams/followed");
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
                 HttpResponseMessage response = await client.GetAsync("?oauth_token=" + userToken);
 
-                if (response.IsSuccessStatusCode)
-                {
+                if (response.IsSuccessStatusCode) {
                     var data = JsonConvert.DeserializeObject<StreamsInfo>(await response.Content.ReadAsStringAsync());
 
                     return data;
                 }
-                return new StreamsInfo() { IsSucces = false, DebugMessage = "GET /streams/followed   -   error: " + response.StatusCode.ToString() };
+                return new StreamsInfo() { IsSuccess = false, DebugMessage = "GET /streams/followed   -   error: " + response.StatusCode.ToString() };
             }
             catch (System.ArgumentNullException) { }
             catch (System.Net.WebException) { }
             catch (System.Net.Http.HttpRequestException) { }
             catch (System.Net.Sockets.SocketException) { }
             catch (System.AggregateException) { }
-            return new StreamsInfo() { IsSucces = false };
+            return new StreamsInfo() { IsSuccess = false };
         }
 
-        public static Follows GetFollowedChannels()
-        {
-            try
-            {
+        public static Follows GetFollowedChannels() {
+            try {
                 HttpClient client = new HttpClient();
                 client.BaseAddress = new Uri("https://api.twitch.tv");
                 client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
@@ -108,22 +97,20 @@ namespace ArethruNotifier
             return new Follows() { IsSucces = false };
         }
 
-        public static void OpenBrowserAuthenticate()
-        {
+        public static void OpenBrowserAuthenticate() {
             System.Diagnostics.Process.Start(AuthURL);
         }
 
-        public static string ListenForResponse()
-        {
+        public async static Task<string> ListenForResponse() {
             //Listen for redirect
             string returnString = "null";
             string htmlMsg = htmlResponseSuccess;
             HttpListener listen = new HttpListener();
             listen.Prefixes.Add(redirectURI + @"/");
             listen.Start();
-            HttpListenerContext context = listen.GetContext();
+            HttpListenerContext context = await listen.GetContextAsync();
             HttpListenerResponse lResponse = context.Response;
-            
+
 
             string queryCode = context.Request.QueryString.Get(0).ToString();
 
@@ -148,13 +135,11 @@ namespace ArethruNotifier
 
 
             // Response Handling and HTTPlistener response message
-            if (response.IsSuccessStatusCode)
-            {
+            if (response.IsSuccessStatusCode) {
                 var data = JsonConvert.DeserializeObject<Token>(response.Content.ReadAsStringAsync().Result);
                 returnString = data.Access_Token;
             }
-            else
-            {
+            else {
                 htmlMsg = "Error in getting authentication response. Please try again.";
             }
 

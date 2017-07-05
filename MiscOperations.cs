@@ -5,10 +5,9 @@ using Microsoft.Win32;
 using System.Linq;
 using System.Xml.Linq;
 
-namespace ArethruNotifier
-{
-    public static class MiscOperations
-    {
+namespace ArethruNotifier {
+    public static class MiscOperations {
+
         public static string RunFileName = "ArethruNotifier.exe";
         public static string StreamFileName = "StreamStart.cmd";
 
@@ -18,13 +17,10 @@ namespace ArethruNotifier
 
 
 
-        public static void CreateStreamLaunchFile(string FolderPath)
-        {
+        public static void CreateStreamLaunchFile(string FolderPath) {
             Directory.CreateDirectory(FolderPath);
-            if (!File.Exists(string.Format(@"{0}\{1}", FolderPath, StreamFileName)))
-            {
-                using (StreamWriter sw = new StreamWriter(FolderPath + @"\" + StreamFileName))
-                {
+            if (!File.Exists(string.Format(@"{0}\{1}", FolderPath, StreamFileName))) {
+                using (StreamWriter sw = new StreamWriter(FolderPath + @"\" + StreamFileName)) {
                     sw.WriteLine("@echo off");
                     sw.WriteLine("");
                     sw.WriteLine("ECHO Script not configured. Edit file at");
@@ -37,8 +33,7 @@ namespace ArethruNotifier
             }
         }
 
-        public static void SetRegistryStartup(bool SetKey)
-        {
+        public static void SetRegistryStartup(bool SetKey) {
             string name = "ArethruNotifier";
 
             RegistryKey rk = Registry.CurrentUser.OpenSubKey
@@ -54,18 +49,15 @@ namespace ArethruNotifier
 
 
 
-        public static void CreateFavoriteConfig(string FolderPath)
-        {
+        public static void CreateFavoriteConfig(string FolderPath) {
             Directory.CreateDirectory(string.Format(@"{0}\{1}", FolderPath, xmlFolder));
-            if (!File.Exists(string.Format(@"{0}\{1}", FolderPath, xmlfile)))
-            {
-                using (StreamWriter sw = new StreamWriter(FolderPath + @"\" + xmlfile))
-                {
+            if (!File.Exists(string.Format(@"{0}\{1}", FolderPath, xmlfile))) {
+                using (StreamWriter sw = new StreamWriter(FolderPath + @"\" + xmlfile)) {
                     sw.WriteLine("<?xml version=\"1.0\" encoding=\"UTF-8\"?>");
                     sw.WriteLine("<favorites>");
-                    sw.WriteLine("  <group name=\"one group of streamers\" priority=\"9001\" soundfile=\"airhorn.wav\" poptime=\"420\">");
-                    sw.WriteLine("      <stream>some channel name</stream>");
-                    sw.WriteLine("      <stream>some other channel</stream>");
+                    sw.WriteLine("  <group name=\"one group of streamers\" priority=\"9001\" soundfile=\"airhorn.wav\" poptime=\"360\">");
+                    sw.WriteLine("      <stream>SomeChannelName</stream>");
+                    sw.WriteLine("      <stream>SomeOtherChannel</stream>");
                     sw.WriteLine("  </group>");
                     sw.WriteLine("</favorites>");
                     sw.WriteLine("<!--");
@@ -81,11 +73,12 @@ namespace ArethruNotifier
         /// Check if a stream exists within a group in the xml doc. 
         /// </summary>
         /// <param name="name">The stream to search for</param>
-        /// <param name="result"></param>
-        /// <returns>Returns 1 if true, 0 if false.</returns>
-        public static int TryGetFavourite(string name, out FavouriteGroup result)
-        {
-            // TODO add error handling for missing doc
+        /// <param name="result">This defaults to null on failure</param>
+        /// <returns>isSuccess</returns>
+        public static bool TryGetFavourite(string name, out FavouriteGroup result) {
+            if (!File.Exists(xmldocpath)) {
+                CreateFavoriteConfig(ConfigMgnr.I.FolderPath);
+            }
             var xdoc = XDocument.Load(xmldocpath);
 
             var query = from x in xdoc.Root.Elements("group").Elements("stream")
@@ -94,8 +87,7 @@ namespace ArethruNotifier
 
             var bufferresult = query.ToArray();
 
-            if (bufferresult.Length > 0)
-            {
+            if (bufferresult.Length > 0) {
                 var xgp = bufferresult[0].Parent;
                 var _result = new FavouriteGroup();
                 int tempint;
@@ -111,22 +103,19 @@ namespace ArethruNotifier
                     _result.Poptime = tempint;
 
                 result = _result;
-                return 1;
+                return true;
             }
 
             result = null;
-            return 0;
+            return false;
         }
     }
 
-    public class FavouriteGroup
-    {
+    public class FavouriteGroup {
         string name = "";
-        public string Name
-        {
+        public string Name {
             get { return name; }
-            set
-            {
+            set {
                 if (value != null)
                     name = value;
             }
@@ -135,29 +124,24 @@ namespace ArethruNotifier
         int priority = -1;
         public int Priority {
             get { return priority; }
-            set
-            {
+            set {
                 priority = value;
             }
         }
 
         string soundfile = "nofile";
-        public string Soundfile
-        {
+        public string Soundfile {
             get { return soundfile; }
-            set
-            {
+            set {
                 if (value != null)
                     soundfile = value;
             }
         }
 
         int poptime = 60;
-        public int Poptime
-        {
+        public int Poptime {
             get { return poptime; }
-            set
-            {
+            set {
                 poptime = value;
             }
         }

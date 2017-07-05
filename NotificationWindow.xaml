@@ -39,7 +39,7 @@
                     <TextBlock Text="No info to show" HorizontalAlignment="Center" Foreground="{DynamicResource Color_DefaultText}" FontStyle="Italic" />
                 </StackPanel>
 
-                <ListView Margin="2" Name="listDataBinding" Background="{DynamicResource Color_MainPanel}" BorderBrush="{x:Null}" SelectionMode="Single" SelectionChanged="listDataBinding_SelectionChanged" >
+                <ListView Style="{DynamicResource Listeroni}" MaxHeight="500px" MaxWidth="300px" Margin="2" Name="listDataBinding" Background="{DynamicResource Color_MainPanel}" BorderBrush="{x:Null}" SelectionMode="Single" SelectionChanged="listDataBinding_SelectionChanged" >
                     <ListView.ItemTemplate>
                         <DataTemplate>
                             <Grid ToolTip="{Binding Channel.Status}">

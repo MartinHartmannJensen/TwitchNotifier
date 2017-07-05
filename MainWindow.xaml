@@ -140,6 +140,7 @@
                 <Separator Margin="0,0,0,9" Width="200" Background="{DynamicResource Color_BtnBG}" />
                 <WrapPanel>
                     <Button x:Name="btnRestart" Style="{DynamicResource DefaultButton}" Content="Restart" Click="btnRestart_Click" />
+                    <Button x:Name="btnRestart2" Style="{DynamicResource DefaultButton}" Content="Restart (no config write)" Click="btnRestart_Click2" />
                     <Button x:Name="btnConfigPath" Style="{DynamicResource DefaultButton}" Content="Config Folder" Click="btnConfigPath_Click" />
                 </WrapPanel>
                 <TextBlock Style="{StaticResource StandardText}" Text="Need help? Hover over text to get descriptions,&#10;             or follow the Source Code link." FontSize="10" HorizontalAlignment="Center"
@@ -167,6 +168,12 @@
                 <TextBox x:Name="DevConsoleInput" Height="22" KeyDown="DevConsoleInput_KeyDown" VerticalAlignment="Bottom" Margin="0,0,0,2" />
             </Grid>
             <!--/Console-->
+
+            <!--Webbrowser-->
+            <Grid x:Name="BrowserPanel" Visibility="Hidden">
+                <WebBrowser x:Name="webBrowser" />
+            </Grid>
+            <!--/Webbrowser-->
         </Grid>
         <!-- /Content -->
     </Grid>

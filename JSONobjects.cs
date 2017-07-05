@@ -1,22 +1,34 @@
 ﻿using System;
 using System.Collections.Generic;
 using Newtonsoft.Json;
+using System.Linq;
 
-namespace ArethruNotifier
-{
-    public class StreamsInfo
-    {
+namespace ArethruNotifier {
+    public class StreamsInfo {
         [JsonProperty("streams")]
         public List<StreamsObj> Streams { get; set; }
 
-        private bool isSucces = true;
-        public bool IsSucces { get { return isSucces; } set { isSucces = value; } }
+        private bool isSuccess = true;
+        public bool IsSuccess { get { return isSuccess; } set { isSuccess = value; } }
 
         public string DebugMessage { get; set; }
+
+        public DateTime CreationTime { get; private set; }
+
+        public StreamsInfo TimeSorted() {
+            if (Streams == null) {
+                return this;
+            }
+            this.Streams.OrderByDescending(x => x.CreatedAt);
+            return this;
+        }
+
+        public StreamsInfo() {
+            CreationTime = DateTime.Now;
+        }
     }
 
-    public class StreamsObj
-    {
+    public class StreamsObj {
         [JsonProperty("_id")]
         public string ID { get; set; }
 
@@ -29,16 +41,17 @@ namespace ArethruNotifier
         [JsonProperty("created_at")]
         public DateTime CreatedAt { get; set; }
 
-        public string CreatedAt_short { get {
+        public string CreatedAt_short {
+            get {
                 return CreatedAt.ToShortTimeString();
-            } }
+            }
+        }
 
         [JsonProperty("channel")]
         public Channel Channel { get; set; }
     }
 
-    public class Channel
-    {
+    public class Channel {
         [JsonProperty("status")]
         public string Status { get; set; }
 
@@ -54,14 +67,12 @@ namespace ArethruNotifier
         public string Logo { get; set; }
     }
 
-    public class Token
-    {
+    public class Token {
         [JsonProperty("access_token")]
         public string Access_Token { get; set; }
     }
 
-    public class Follows
-    {
+    public class Follows {
         [JsonProperty("follows")]
         public List<Follow> List { get; set; }
 
@@ -74,14 +85,12 @@ namespace ArethruNotifier
         public string DebugMessage { get; set; }
     }
 
-    public class Follow
-    {
+    public class Follow {
         [JsonProperty("channel")]
         public Channel Channel { get; set; }
     }
 
-    public class User
-    {
+    public class User {
         [JsonProperty("display_name")]
         public string Name { get; set; }
     }

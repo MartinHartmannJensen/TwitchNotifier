@@ -4,11 +4,9 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace ArethruNotifier
-{
+namespace ArethruNotifier {
     // Work in progress, just a quick take on a commandline structure 
-    class AN_Console
-    {
+    class AN_Console {
         MainWindow mainWin;
 
         // Made to hold a RichTextBox's Write and Clear methods
@@ -29,24 +27,20 @@ namespace ArethruNotifier
         Dictionary<string, Action> oneliners = new Dictionary<string, Action>();
 
 
-        public AN_Console(System.Windows.Controls.RichTextBox textbox, MainWindow textboxOwner)
-        {
+        public AN_Console(System.Windows.Controls.RichTextBox textbox, MainWindow textboxOwner) {
             mainWin = textboxOwner;
             Acout = textbox.AppendText;
             Acclear = textbox.Document.Blocks.Clear;
             SetTreeValue();
         }
 
-        void CommandParse(string s)
-        {
+        void CommandParse(string s) {
             string errMsg = "Unknown Command";
             s = s.ToUpper();
             string[] cmds = s.Split(null);
 
-            try
-            {
-                switch (cmds.Length)
-                {
+            try {
+                switch (cmds.Length) {
                     case 1:
                         mainTree["ONELINERS"][cmds[0]].Invoke();
                         break;
@@ -58,42 +52,37 @@ namespace ArethruNotifier
                         break;
                 }
             }
-            catch (IndexOutOfRangeException)
-            {
+            catch (IndexOutOfRangeException) {
                 Out = errMsg;
             }
-            catch (KeyNotFoundException)
-            {
+            catch (KeyNotFoundException) {
                 Out = errMsg;
             }
         }
 
-        void SetTreeValue()
-        {
+        void SetTreeValue() {
             mainTree["GET"] = get;
             mainTree["ONELINERS"] = oneliners;
 
             get["LIVE"] = new Action(() => {
-                var val = WebComm.GetLiveStreams();
+                var val = APIcalls.GetLiveStreams();
                 Out = "[ Live ]";
-                foreach (var item in val.Streams)
-                {
+                foreach (var item in val.Streams) {
                     Out = item.Channel.Name;
                 }
             });
 
             get["FOLLOWS"] = new Action(() => {
-                var val = WebComm.GetFollowedChannels();
+                var val = APIcalls.GetFollowedChannels();
                 Out = "[ Follows ]";
-                foreach (var item in val.List)
-                {
-                    Out = item.Channel.Name;
+                foreach (var item in val.List) {
+                    Out = item.Channel.Name + item.Channel.Logo;
                 }
             });
 
             oneliners["TEST"] = new Action(() => {
-                var val = WebComm.GetLiveStreams();
-                if (val.IsSucces)
+                var val = APIcalls.GetLiveStreams();
+                if (val.IsSuccess)
                     Out = "Test> Connected";
                 else
                     Out = "Test> Connection Failed [DebugMessage]: " + val.DebugMessage;
@@ -104,12 +93,11 @@ namespace ArethruNotifier
             });
 
             oneliners["POP"] = new Action(() => {
-                NotifyCtr.Instance.DisplayNotification(new StreamsInfo(), ConfigMgnr.I.NotificationScreenTime);
+                ConfigMgnr.I.NotifyController.DisplayNotificationWindow();
             });
 
             oneliners["LIVEPOP"] = new Action(() => {
-                var si = WebComm.GetLiveStreams();
-                NotifyCtr.Instance.DisplayNotification(si, ConfigMgnr.I.NotificationScreenTime);
+                ConfigMgnr.I.DataHandler.UpdateLive(TwitchDataHandler.UpdateMode.Force);
             });
 
             oneliners["FOLLOWS"] = new Action(() => {
@@ -118,7 +106,7 @@ namespace ArethruNotifier
             });
 
             oneliners["SOUND"] = new Action(() => {
-                NotifyCtr.Instance.PlaySound();
+                ConfigMgnr.I.NotifyController.PlaySound();
             });
         }
     }
