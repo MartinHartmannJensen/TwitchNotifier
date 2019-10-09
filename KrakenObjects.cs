@@ -3,10 +3,10 @@ using System.Collections.Generic;
 using Newtonsoft.Json;
 using System.Linq;
 
-namespace ArethruNotifier {
-    public class StreamsInfo {
+namespace ArethruNotifier.Kraken {
+    public class Streams {
         [JsonProperty("streams")]
-        public List<StreamsObj> Streams { get; set; }
+        public List<StreamsObj> Stream { get; set; }
 
         private bool isSuccess = true;
         public bool IsSuccess { get { return isSuccess; } set { isSuccess = value; } }
@@ -15,15 +15,15 @@ namespace ArethruNotifier {
 
         public DateTime CreationTime { get; private set; }
 
-        public StreamsInfo TimeSorted() {
-            if (Streams == null) {
+        public Streams TimeSorted() {
+            if (Stream == null) {
                 return this;
             }
-            this.Streams.OrderByDescending(x => x.CreatedAt);
+            this.Stream.OrderByDescending(x => x.CreatedAt);
             return this;
         }
 
-        public StreamsInfo() {
+        public Streams() {
             CreationTime = DateTime.Now;
         }
     }

@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Threading;
 using WinForms = System.Windows.Forms;
+using ArethruNotifier.Helix;
 
 namespace ArethruNotifier {
     public class NotifyCtr {
@@ -34,13 +35,13 @@ namespace ArethruNotifier {
         /// Request a popupwindow be made from last gathered info
         /// </summary>
         public void DisplayNotificationWindow() {
-            CreateWindow(ConfigMgnr.I.DataHandler.CurrentInfo, ConfigMgnr.I.NotificationScreenTime);
+            CreateWindow(ConfigMgnr.I.DataHandler.CurrentStreams, ConfigMgnr.I.NotificationScreenTime);
         }
         /// <summary>
         /// Create a popupwindow with provided StreamsInfo
         /// </summary>
         /// <param name="si">Data for the window</param>
-        public void DisplayNotificationWindow(StreamsInfo si) {
+        public void DisplayNotificationWindow(Streams si) {
             CreateWindow(si, ConfigMgnr.I.NotificationScreenTime);
             PlaySound();
         }
@@ -49,12 +50,12 @@ namespace ArethruNotifier {
         /// </summary>
         /// <param name="si"></param>
         /// <param name="fg"></param>
-        public void DisplayNotificationWindow(StreamsInfo si, FavouriteGroup fg) {
+        public void DisplayNotificationWindow(Streams si, FavouriteGroup fg) {
             CreateWindow(si, fg.Poptime);
             PlaySound(fg.Soundfile);
         }
 
-        private void CreateWindow(StreamsInfo sInfo, int displayTime) {
+        private void CreateWindow(Streams sInfo, int displayTime) {
             if (windowThread != null && windowThread.IsAlive)
                 windowThread.Abort();
 
@@ -76,9 +77,9 @@ namespace ArethruNotifier {
                 }
 
                 // Check if there's valid information to display
-                if (sInfo != null && sInfo.Streams != null && sInfo.Streams.Count > 0) {
+                if (sInfo != null && sInfo.Stream != null && sInfo.Stream.Count > 0) {
                     w.TextTime.Text = "recieved at " + sInfo.CreationTime.ToShortTimeString();
-                    w.listDataBinding.ItemsSource = sInfo.Streams;
+                    w.listDataBinding.ItemsSource = sInfo.Stream;
                 }
                 else {
                     w.ErrorPanel.Visibility = System.Windows.Visibility.Visible;

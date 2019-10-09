@@ -3,6 +3,7 @@ using System.Windows.Threading;
 using System.Windows;
 using System.Windows.Controls;
 using WinForms = System.Windows.Forms;
+using ArethruNotifier.Helix;
 
 namespace ArethruNotifier {
     public partial class NotificationWindow {
@@ -38,8 +39,8 @@ namespace ArethruNotifier {
         private void listDataBinding_SelectionChanged(object sender, SelectionChangedEventArgs e) {
             ListView listV = (ListView)sender;
 
-            var selected = (StreamsObj)listV.Items[listV.SelectedIndex];
-            string selectedName = selected.Channel.Name.ToLower();
+            var selected = (Stream)listV.Items[listV.SelectedIndex];
+            string selectedName = selected.Channel.ToLower();
 
             if (!ConfigMgnr.I.OpenStreamWithScript) {
                 System.Diagnostics.Process.Start("http://www.twitch.tv/" + selectedName);

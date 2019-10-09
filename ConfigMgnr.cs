@@ -11,6 +11,7 @@ namespace ArethruNotifier {
 
         private ConfigMgnr() : base() {
             DefaultCollection["UserToken"] = "notoken";
+            DefaultCollection["UserName"] = "0";
             DefaultCollection["UpdateFrequency"] = "60";
             DefaultCollection["NotificationScreenTime"] = "60";
             DefaultCollection["OfflineMode"] = "False";
@@ -28,6 +29,7 @@ namespace ArethruNotifier {
             RunStartup();
         }
         public string UserToken { get { return Get("UserToken"); } set { Set("UserToken", value); } }
+        public string UserName { get { return Get("UserName"); } set { Set("UserName", value); } }
         public int UpdateFrequency { get { return int.Parse(Get("UpdateFrequency")); } set { Set("UpdateFrequency", value); } }
         public int NotificationScreenTime { get { return int.Parse(Get("NotificationScreenTime")); } set { Set("NotificationScreenTime", value); } }
         public bool OfflineMode { get { return bool.Parse(Get("OfflineMode")); } set { Set("OfflineMode", value); } }

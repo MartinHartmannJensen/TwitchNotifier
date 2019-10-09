@@ -8,6 +8,7 @@ using WinForms = System.Windows.Forms;
 using System.Text.RegularExpressions;
 using System.Threading;
 using System.Reflection;
+using ArethruNotifier.Helix;
 
 namespace ArethruNotifier {
 
@@ -73,6 +74,9 @@ namespace ArethruNotifier {
         }
 
         void Set_SettingsUI() {
+            if (!ConfigMgnr.I.UserName.Equals("0")) {
+                boxToken.Text = ConfigMgnr.I.UserName;
+            }
             boxUpdFreq.Text = ConfigMgnr.I.UpdateFrequency.ToString();
             boxPopTime.Text = ConfigMgnr.I.NotificationScreenTime.ToString();
             chkUpd.IsChecked = ConfigMgnr.I.OfflineMode;
@@ -96,24 +100,12 @@ namespace ArethruNotifier {
         }
 
         public void UpdateFollowsList() {
-            // TODO async pattern
-            var originalTitle = this.Title;
-            this.Title = originalTitle + " - Fetching list, hold on!";
-            System.Threading.Thread t = new System.Threading.Thread(() => {
-                var tup = ConfigMgnr.I.DataHandler.GetFollows();
-                Dispatcher.BeginInvoke(DispatcherPriority.Normal, new Action(() => {
-                    if (tup != null) {
-                        FollowsList.ItemsSource = tup.Item1;
-                        FollowsList2.ItemsSource = tup.Item2;
-                    }
-                    this.Title = originalTitle;
-                }));
-            });
-            t.Start();
+            var tup = ConfigMgnr.I.DataHandler.GetFollows();
+            FollowsList.ItemsSource = tup.Item1;
+            FollowsList2.ItemsSource = tup.Item2;
         }
 
         void SetActivePanel(int i) {
-            //TODO better solution
             Panel[] pans = { FollowPanel, SettingsPanel, ConsolePanel, BrowserPanel };
 
             foreach (var item in pans) {
@@ -200,24 +192,25 @@ namespace ArethruNotifier {
             }
         }
 
-        private async void btnAuth_Click(object sender, RoutedEventArgs e) {
-            //APIcalls.OpenBrowserAuthenticate();
-            //string user_tok = APIcalls.ListenForResponse();
-            //DevConsoleOutput.AppendText("Usertoken Saved: " + user_tok + "\n");
-            //ConfigMgnr.I.UserToken = user_tok;
-            SetActivePanel(3);
-            webBrowser.Navigate(APIcalls.AuthURL);
-            string user_tok = await APIcalls.ListenForResponse();
-            DevConsoleOutput.AppendText("Usertoken Saved: " + user_tok + "\n");
-            ConfigMgnr.I.UserToken = user_tok;
-            ConfigMgnr.I.Save();
-            WinForms.Application.Restart();
-            System.Diagnostics.Process.GetCurrentProcess().Kill();
-        }
+        // Deprecated
+        //private async void btnAuth_Click(object sender, RoutedEventArgs e) {
+        //    //APIcalls.OpenBrowserAuthenticate();
+        //    //string user_tok = APIcalls.ListenForResponse();
+        //    //DevConsoleOutput.AppendText("Usertoken Saved: " + user_tok + "\n");
+        //    //ConfigMgnr.I.UserToken = user_tok;
+        //    SetActivePanel(3);
+        //    webBrowser.Navigate(APIcalls.AuthURL);
+        //    string user_tok = await APIcalls.ListenForResponse();
+        //    DevConsoleOutput.AppendText("Usertoken Saved: " + user_tok + "\n");
+        //    ConfigMgnr.I.UserToken = user_tok;
+        //    ConfigMgnr.I.Save();
+        //    WinForms.Application.Restart();
+        //    System.Diagnostics.Process.GetCurrentProcess().Kill();
+        //}
 
-        private void btnDeAuth_Click(object sender, RoutedEventArgs e) {
-            System.Diagnostics.Process.Start("http://www.twitch.tv/settings/connections");
-        }
+        //private void btnDeAuth_Click(object sender, RoutedEventArgs e) {
+        //    System.Diagnostics.Process.Start("http://www.twitch.tv/settings/connections");
+        //}
 
         //private void btnTokSave_Click(object sender, RoutedEventArgs e)
         //{
@@ -373,6 +366,29 @@ namespace ArethruNotifier {
             if (numba < 3)
                 numba = 3;
             ConfigMgnr.I.NotificationScreenTime = numba;
+        }
+
+        private void boxToken_KeyDown(object sender, KeyEventArgs e) {
+            if (e.Key == Key.Enter) {
+                boxUpdFreq.Focus();
+                Keyboard.ClearFocus();
+                textTokenHelp.Visibility = Visibility.Collapsed;
+                
+                Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () => {
+                    string sbt = Regex.Replace(boxToken.Text, @"\s+", "");
+                    Users userObj = await HelixAPI.GetUser(sbt);
+                    if (userObj.IsOk && userObj.User.Count > 0 && !sbt.Equals("")) {
+                        ConfigMgnr.I.UserToken = userObj.User[0].Id;
+                        ConfigMgnr.I.UserName = sbt;
+                        ConfigMgnr.I.DataHandler.UpdateLive(TwitchDataHandler.UpdateMode.Compare);
+                        ConfigMgnr.I.Save();
+                    }
+                }));
+            }
+        }
+
+        private void boxToken_Focus(object sender, EventArgs e) {
+            textTokenHelp.Visibility = Visibility.Visible;
         }
 
         #endregion

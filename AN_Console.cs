@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using ArethruNotifier.Helix;
 
 namespace ArethruNotifier {
     // Work in progress, just a quick take on a commandline structure 
@@ -64,16 +65,46 @@ namespace ArethruNotifier {
             mainTree["GET"] = get;
             mainTree["ONELINERS"] = oneliners;
 
-            get["LIVE"] = new Action(() => {
-                var val = APIcalls.GetLiveStreams();
+            get["KLIVE"] = new Action(() => {
+                var val = Kraken.APIcalls.GetLiveStreams();
                 Out = "[ Live ]";
-                foreach (var item in val.Streams) {
+                foreach (var item in val.Stream) {
                     Out = item.Channel.Name;
                 }
             });
 
+            get["HUSER"] = new Action(async () => {
+                Users val = await HelixAPI.GetUser("baertaffy");
+                Out = "[ User Id ]";
+                foreach (var item in val.User) {
+                    Out = item.Id;
+                }
+            });
+
+            get["STREAMS"] = new Action(async () => {
+                // get follows -> get streams from user ids -> display live
+                Helix.Follows folls = await Helix.HelixAPI.GetFollows("68744599", 100);
+                var idstr = folls.GenerateUserIds();
+                Helix.Streams strims = await Helix.HelixAPI.GetStreams(idstr);
+
+                foreach (var item in strims.Stream) {
+                    if (item.IsLive) {
+                        Out = item.Channel;
+                    }
+                }
+            });
+
+            get["HELIXFOL"] = new Action(async () => {
+                // TODO i dunno null error :)
+                Helix.Follows valhalla = await HelixAPI.GetFollows("68744599");
+                Out = "[ Users Follows ]";
+                foreach (var item in valhalla.Follow) {
+                    Out = item.Name;
+                }
+            });
+
             get["FOLLOWS"] = new Action(() => {
-                var val = APIcalls.GetFollowedChannels();
+                var val = Kraken.APIcalls.GetFollowedChannels();
                 Out = "[ Follows ]";
                 foreach (var item in val.List) {
                     Out = item.Channel.Name + item.Channel.Logo;
@@ -81,7 +112,7 @@ namespace ArethruNotifier {
             });
 
             oneliners["TEST"] = new Action(() => {
-                var val = APIcalls.GetLiveStreams();
+                var val = Kraken.APIcalls.GetLiveStreams();
                 if (val.IsSuccess)
                     Out = "Test> Connected";
                 else

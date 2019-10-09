@@ -6,7 +6,7 @@ using System.Net.Http.Headers;
 using Newtonsoft.Json;
 using System.Threading.Tasks;
 
-namespace ArethruNotifier {
+namespace ArethruNotifier.Kraken {
     public static class APIcalls {
         static string clientID = MyClientID.clientID;
         static string clientSecret = MyClientID.clientSecret;
@@ -26,7 +26,28 @@ namespace ArethruNotifier {
             + "Settings saved. Restarting application."
             +"</BODY></HTML>";
 
-        public static StreamsInfo GetLiveStreams() {
+        public static string GetStreamHelix() {
+            try {
+                HttpClient client = new HttpClient();
+                client.BaseAddress = new Uri("https://api.twitch.tv/helix/streams");
+                client.DefaultRequestHeaders.Add("Client-ID", clientID);
+                //client.DefaultRequestHeaders.Accept.Add(new MediaTypeWithQualityHeaderValue("application/json"));
+                HttpResponseMessage response = client.GetAsync("?first=20&user_login=arethru").Result;
+
+                if (!response.IsSuccessStatusCode) {
+                    return response.ToString();
+                }
+                return response.Content.ReadAsStringAsync().Result;
+            }
+            catch (System.ArgumentNullException) { }
+            catch (System.Net.WebException) { }
+            catch (System.Net.Http.HttpRequestException) { }
+            catch (System.Net.Sockets.SocketException) { }
+            catch (System.AggregateException) { }
+            return "Error";
+        }
+
+        public static Streams GetLiveStreams() {
             try {
                 HttpClient client = new HttpClient();
                 client.BaseAddress = new Uri("https://api.twitch.tv/kraken/streams/followed");
@@ -34,21 +55,21 @@ namespace ArethruNotifier {
                 HttpResponseMessage response = client.GetAsync("?oauth_token=" + userToken).Result;
 
                 if (response.IsSuccessStatusCode) {
-                    var data = JsonConvert.DeserializeObject<StreamsInfo>(response.Content.ReadAsStringAsync().Result);
+                    var data = JsonConvert.DeserializeObject<Streams>(response.Content.ReadAsStringAsync().Result);
 
                     return data;
                 }
-                return new StreamsInfo() { IsSuccess = false, DebugMessage = "GET /streams/followed   -   error: " + response.StatusCode.ToString() };
+                return new Streams() { IsSuccess = false, DebugMessage = "GET /streams/followed   -   error: " + response.StatusCode.ToString() };
             }
             catch (System.ArgumentNullException) { }
             catch (System.Net.WebException) { }
             catch (System.Net.Http.HttpRequestException) { }
             catch (System.Net.Sockets.SocketException) { }
             catch (System.AggregateException) { }
-            return new StreamsInfo() { IsSuccess = false };
+            return new Streams() { IsSuccess = false };
         }
 
-        public static async Task<StreamsInfo> GetLiveStreamsTask() {
+        public static async Task<Streams> GetLiveStreamsTask() {
             try {
                 HttpClient client = new HttpClient();
                 client.BaseAddress = new Uri("https://api.twitch.tv/kraken/streams/followed");
@@ -56,18 +77,18 @@ namespace ArethruNotifier {
                 HttpResponseMessage response = await client.GetAsync("?oauth_token=" + userToken);
 
                 if (response.IsSuccessStatusCode) {
-                    var data = JsonConvert.DeserializeObject<StreamsInfo>(await response.Content.ReadAsStringAsync());
+                    var data = JsonConvert.DeserializeObject<Streams>(await response.Content.ReadAsStringAsync());
 
                     return data;
                 }
-                return new StreamsInfo() { IsSuccess = false, DebugMessage = "GET /streams/followed   -   error: " + response.StatusCode.ToString() };
+                return new Streams() { IsSuccess = false, DebugMessage = "GET /streams/followed   -   error: " + response.StatusCode.ToString() };
             }
             catch (System.ArgumentNullException) { }
             catch (System.Net.WebException) { }
             catch (System.Net.Http.HttpRequestException) { }
             catch (System.Net.Sockets.SocketException) { }
             catch (System.AggregateException) { }
-            return new StreamsInfo() { IsSuccess = false };
+            return new Streams() { IsSuccess = false };
         }
 
         public static Follows GetFollowedChannels() {

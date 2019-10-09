@@ -5,7 +5,7 @@
         xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
         xmlns:local="clr-namespace:ArethruNotifier"
         mc:Ignorable="d"
-        Title="Arethru Notifier" Height="477" Width="660" StateChanged="Window_StateChanged">
+        Title="Arethru Notifier" Height="540" Width="660" StateChanged="Window_StateChanged">
 
     <Grid Background="{DynamicResource Color_MainPanel}">
         <!--NavBar-->
@@ -38,13 +38,13 @@
                                 <DataTemplate>
                                     <Border Style="{DynamicResource FollowTemplate}">
                                         <DockPanel>
-                                            <Image Source="{Binding Channel.Logo}" />
-                                            <TextBlock Text="{Binding Channel.Name}" ToolTip="{Binding Channel.Name}" Background="{x:Null}" 
+                                            <!--<Image Source="{Binding Channel.Logo}" />-->
+                                            <TextBlock Text="{Binding Name}" ToolTip="{Binding Name}" Background="{x:Null}" 
                                                        Foreground="{DynamicResource Color_DefaultText}" HorizontalAlignment="Left" 
                                                        VerticalAlignment="Center" Margin="5,0,0,0" MaxWidth="100" MinWidth="10" />
                                             <StackPanel DockPanel.Dock="Right" HorizontalAlignment="Right">
                                                 <TextBlock Text="Live!" Foreground="{DynamicResource Color_Highlight}" />
-                                                <TextBlock Text="Profile" ToolTip="{Binding Channel.Url_Profile}" MouseDown="Hyperlink_Click" Cursor="Hand" TextDecorations="Underline" />
+                                                <!--<TextBlock Text="Profile" ToolTip="{Binding Channel.Url_Profile}" MouseDown="Hyperlink_Click" Cursor="Hand" TextDecorations="Underline" />-->
                                             </StackPanel>
                                         </DockPanel>
                                     </Border>
@@ -63,11 +63,11 @@
                                 <DataTemplate>
                                     <Border Style="{DynamicResource FollowTemplate}">
                                         <DockPanel>
-                                            <Image Source="{Binding Channel.Logo}" />
-                                            <TextBlock Text="{Binding Channel.Name}" ToolTip="{Binding Channel.Name}" Background="{x:Null}" 
+                                            <!--<Image Source="{Binding Channel.Logo}" />-->
+                                            <TextBlock Text="{Binding Name}" ToolTip="{Binding Name}" Background="{x:Null}" 
                                                        Foreground="{DynamicResource Color_DefaultText}" HorizontalAlignment="Left" VerticalAlignment="Center" 
                                                        Margin="5,0,0,0" MaxWidth="100" MinWidth="10" />
-                                            <TextBlock Text="Profile" ToolTip="{Binding Channel.Url_Profile}" MouseDown="Hyperlink_Click" DockPanel.Dock="Right" HorizontalAlignment="Right" Cursor="Hand" TextDecorations="Underline" />
+                                            <!--<TextBlock Text="Profile" ToolTip="{Binding Channel.Url_Profile}" MouseDown="Hyperlink_Click" DockPanel.Dock="Right" HorizontalAlignment="Right" Cursor="Hand" TextDecorations="Underline" />-->
                                         </DockPanel>
                                     </Border>
                                 </DataTemplate>
@@ -81,8 +81,16 @@
             <!--Settings-->
             <StackPanel x:Name="SettingsPanel" Style="{DynamicResource SettingsPanel}" Visibility="Visible" HorizontalAlignment="Stretch">
                 <WrapPanel>
-                    <Button x:Name="btnAuth" Content="Authorize" Style="{DynamicResource DefaultButton}" Click="btnAuth_Click" />
-                    <Button x:Name="btnDeAuth" Style="{DynamicResource DefaultButton}" Content="Deauthorize" Click="btnDeAuth_Click" />
+                    <!--<Button x:Name="btnAuth" Content="Authorize" Style="{DynamicResource DefaultButton}" Click="btnAuth_Click" />
+                    <Button x:Name="btnDeAuth" Style="{DynamicResource DefaultButton}" Content="Deauthorize" Click="btnDeAuth_Click" />-->
+                  <TextBlock Style="{DynamicResource StandardText}" FontSize="17" Text="Twitch Username"
+                               ToolTip="No need for authentication, just type a name and hit enter." />
+                </WrapPanel>
+                <WrapPanel>
+                  <TextBox x:Name="boxToken" TextAlignment="Center" Width="150" KeyDown="boxToken_KeyDown" GotFocus="boxToken_Focus" />
+                </WrapPanel>
+                <WrapPanel>
+                  <TextBlock x:Name="textTokenHelp" Visibility="Collapsed" Style="{DynamicResource StandardText}" Text="'Enter' for change to take effect." />           
                 </WrapPanel>
                 <Separator Margin="0,9" Width="200" Background="{DynamicResource Color_BtnBG}" />
                 <!--<WrapPanel Visibility="Collapsed">

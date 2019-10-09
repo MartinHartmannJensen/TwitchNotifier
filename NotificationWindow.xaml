@@ -42,16 +42,16 @@
                 <ListView Style="{DynamicResource Listeroni}" MaxHeight="500px" MaxWidth="300px" Margin="2" Name="listDataBinding" Background="{DynamicResource Color_MainPanel}" BorderBrush="{x:Null}" SelectionMode="Single" SelectionChanged="listDataBinding_SelectionChanged" >
                     <ListView.ItemTemplate>
                         <DataTemplate>
-                            <Grid ToolTip="{Binding Channel.Status}">
+                            <Grid ToolTip="{Binding Title}">
                                 <Rectangle Fill="Transparent" />
                                 <StackPanel Margin="0,0,0,7">
                                     <Separator Margin="3,2,3,7" Background="{DynamicResource Color_BtnBG}" />
                                     <WrapPanel>
-                                        <TextBlock Text="{Binding Channel.Name}" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource Color_DefaultText}" Margin="0,0,0,4" />
+                                        <TextBlock Text="{Binding Channel}" FontSize="12" FontWeight="Bold" Foreground="{DynamicResource Color_DefaultText}" Margin="0,0,0,4" />
                                         <TextBlock Text="• " Margin="5,0,0,0" Foreground="{DynamicResource Color_DefaultText}" />
                                         <TextBlock Text="{Binding Viewers}" FontSize="11" Foreground="{DynamicResource Color_DefaultText}" Margin="0,2,0,0"/>
                                         <TextBlock Text=" • " Margin="5,0,0,0" Foreground="{DynamicResource Color_DefaultText}" />
-                                        <TextBlock Text="{Binding CreatedAt_short}" FontSize="11" Foreground="{DynamicResource Color_DefaultText}" Margin="0,2,0,0"/>
+                                        <TextBlock Text="{Binding CreatedAt_Short}" FontSize="11" Foreground="{DynamicResource Color_DefaultText}" Margin="0,2,0,0"/>
                                     </WrapPanel>
                                     <WrapPanel>
                                         <TextBlock Text="Streaming " Foreground="{DynamicResource Color_DefaultText}" FontSize="12" />
