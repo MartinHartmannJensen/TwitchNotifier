@@ -5,16 +5,8 @@ using System.Linq;
 using System.Text;
 
 namespace ArethruNotifier.Helix {
-    //public class StreamsInfo {
-    //    public List<User> users;
-    //    public List<Stream> streams;
-
-
-    //}
-
     public class Users {
-        bool isOk = false;
-        public bool IsOk { get; set; }
+        public bool IsOk { get; set; } = false;
 
         [JsonProperty("data")]
         public List<User> User { get; set; }
@@ -26,8 +18,7 @@ namespace ArethruNotifier.Helix {
     }
 
     public class Streams {
-        bool isOk = false;
-        public bool IsOk { get; set; }
+        public bool IsOk { get; set; } = false;
 
         [JsonProperty("data")]
         public List<Stream> Stream { get; set; }
@@ -94,8 +85,7 @@ namespace ArethruNotifier.Helix {
     }
 
     public class Follows {
-        bool isOk = false;
-        public bool IsOk { get; set; }
+        public bool IsOk { get; set; } = false;
 
         [JsonProperty("data")]
         public List<Follow> Follow { get; set; }
@@ -119,12 +109,8 @@ namespace ArethruNotifier.Helix {
         public string Name { get; set; }
     }
 
-    // todo
-    // get game object
-
     public class Games {
-        bool isOk = false;
-        public bool IsOk { get; set; }
+        public bool IsOk { get; set; } = false;
 
         [JsonProperty("data")]
         public List<Game> Game { get; set; }

@@ -14,10 +14,9 @@ namespace ArethruNotifier {
             DefaultCollection["UserName"] = "0";
             DefaultCollection["UpdateFrequency"] = "60";
             DefaultCollection["NotificationScreenTime"] = "60";
-            DefaultCollection["OfflineMode"] = "False";
+            DefaultCollection["Mode"] = "0";
             DefaultCollection["StartWithWindows"] = "False";
             DefaultCollection["StartMinimized"] = "False";
-            DefaultCollection["PlaySound"] = "True";
             DefaultCollection["DisplayMonitor"] = "0";
             DefaultCollection["OpenStreamWithScript"] = "False";
             DefaultCollection["Color_MainPanel"] = "0";
@@ -32,10 +31,9 @@ namespace ArethruNotifier {
         public string UserName { get { return Get("UserName"); } set { Set("UserName", value); } }
         public int UpdateFrequency { get { return int.Parse(Get("UpdateFrequency")); } set { Set("UpdateFrequency", value); } }
         public int NotificationScreenTime { get { return int.Parse(Get("NotificationScreenTime")); } set { Set("NotificationScreenTime", value); } }
-        public bool OfflineMode { get { return bool.Parse(Get("OfflineMode")); } set { Set("OfflineMode", value); } }
+        public int Mode { get { return int.Parse(Get("Mode")); } set { Set("Mode", value); } }
         public bool StartWithWindows { get { return bool.Parse(Get("StartWithWindows")); } set { Set("StartWithWindows", value); } }
         public bool StartMinimized { get { return bool.Parse(Get("StartMinimized")); } set { Set("StartMinimized", value); } }
-        public bool PlaySound { get { return bool.Parse(Get("PlaySound")); } set { Set("PlaySound", value); } }
         public int DisplayMonitor { get { return int.Parse(Get("DisplayMonitor")); } set { Set("DisplayMonitor", value); } }
         public bool OpenStreamWithScript { get { return bool.Parse(Get("OpenStreamWithScript")); } set { Set("OpenStreamWithScript", value); } }
         public string Color_MainPanel { get { return Get("Color_MainPanel"); } set { Set("Color_MainPanel", value); } }
@@ -55,19 +53,7 @@ namespace ArethruNotifier {
                 return _notify;
             }
         }
-
-        private TwitchDataHandler _datahandler = null;
-        public TwitchDataHandler DataHandler {
-            get {
-                if (_datahandler == null) {
-                    _datahandler = new TwitchDataHandler();
-                }
-                return _datahandler;
-            }
-        }
     }
-
-
 }
 
 namespace CustomConfigProject.Base {

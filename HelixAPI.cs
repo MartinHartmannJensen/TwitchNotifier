@@ -26,7 +26,9 @@ namespace ArethruNotifier.Helix {
                 data.IsOk = true;
                 return data;
             }
-            catch (System.Net.Http.HttpRequestException) { }
+            catch (System.Net.Http.HttpRequestException e) {
+                var ee = e;
+            }
 
             return new Users();
         }

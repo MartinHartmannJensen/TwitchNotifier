@@ -2,23 +2,42 @@
 using System.Threading;
 using WinForms = System.Windows.Forms;
 using ArethruNotifier.Helix;
+using TUR = ArethruNotifier.TwitchDataHandler.UpdateResult;
 
 namespace ArethruNotifier {
     public class NotifyCtr {
+        TwitchDataHandler tdh = null;
+        public TwitchDataHandler DataHandler {
+            get {
+                return tdh;
+            }
+        }
 
         Thread updater;
         Thread windowThread;
         System.Media.SoundPlayer player;
-
         string soundPath = ConfigMgnr.I.FolderPath + @"\sound.wav";
+
+        public enum NotifyModes {
+            AllBells, OnlyFavorites, OnlyDisplayFavorites, NoSound
+        }
+
+        public NotifyCtr() {
+            tdh = new TwitchDataHandler();
+            tdh.UpdateFollows();
+        }
 
         public void StartStreaminfoUpdater() {
             if (updater != null && updater.IsAlive)
                 updater.Abort();
 
-            updater = new Thread(new ThreadStart(() => {
+            updater = new Thread(new ThreadStart(async () => {
                 while (true) {
-                    ConfigMgnr.I.DataHandler.UpdateLive(TwitchDataHandler.UpdateMode.Compare);
+                    TUR result = await tdh.Update();
+                    if (result == TUR.Update || result == TUR.Favorite) {
+                        var m = (NotifyModes)ConfigMgnr.I.Mode;
+                        Display(result, m);
+                    }
                     Thread.Sleep(ConfigMgnr.I.UpdateFrequency * 1000);
                 }
             }));
@@ -34,25 +53,56 @@ namespace ArethruNotifier {
         /// <summary>
         /// Request a popupwindow be made from last gathered info
         /// </summary>
-        public void DisplayNotificationWindow() {
-            CreateWindow(ConfigMgnr.I.DataHandler.CurrentStreams, ConfigMgnr.I.NotificationScreenTime);
+        public void DisplayNotification() {
+            CreateWindow(tdh.CurrentStreams, ConfigMgnr.I.NotificationScreenTime);
         }
+
         /// <summary>
-        /// Create a popupwindow with provided StreamsInfo
+        /// Create a popupwindow with NotifyModes settings
         /// </summary>
-        /// <param name="si">Data for the window</param>
-        public void DisplayNotificationWindow(Streams si) {
-            CreateWindow(si, ConfigMgnr.I.NotificationScreenTime);
-            PlaySound();
-        }
-        /// <summary>
-        /// Create a popupwindow with provided StreamsInfo with the settings of the selected FavouriteGroup
-        /// </summary>
-        /// <param name="si"></param>
-        /// <param name="fg"></param>
-        public void DisplayNotificationWindow(Streams si, FavouriteGroup fg) {
-            CreateWindow(si, fg.Poptime);
-            PlaySound(fg.Soundfile);
+        private void Display(TUR update, NotifyModes mode) {
+            // Modes:
+            // -No Sound
+            // No sound
+            // Display both
+            // - Only Display Favorites
+            // No sound
+            // Display Favorite
+            // -Only Favorites
+            // No Normal Sound
+            // Display Favorites
+            // -All Bells
+            // Sound and Display Both
+
+            int popT = ConfigMgnr.I.NotificationScreenTime;
+
+            if (update == TUR.Update) {
+                if (mode == NotifyModes.AllBells) {
+                    CreateWindow(tdh.CurrentStreams, popT);
+                    PlaySound();
+                }
+                else {
+                    CreateWindow(tdh.CurrentStreams, popT);
+                }
+            }
+            else {
+                switch (mode) {
+                    case NotifyModes.AllBells:
+                        CreateWindow(tdh.CurrentStreams, tdh.CurrentFavorites.Poptime);
+                        PlaySound(tdh.CurrentFavorites.Soundfile);
+                        break;
+                    case NotifyModes.OnlyFavorites:
+                        CreateWindow(tdh.CurrentStreams, tdh.CurrentFavorites.Poptime);
+                        PlaySound(tdh.CurrentFavorites.Soundfile);
+                        break;
+                    case NotifyModes.OnlyDisplayFavorites:
+                    case NotifyModes.NoSound:
+                        CreateWindow(tdh.CurrentStreams, tdh.CurrentFavorites.Poptime);
+                        break;
+                    default:
+                        break;
+                }
+            }
         }
 
         private void CreateWindow(Streams sInfo, int displayTime) {
@@ -105,28 +155,24 @@ namespace ArethruNotifier {
         }
 
         public void PlaySound() {
-            if (ConfigMgnr.I.PlaySound) {
-                try {
-                    player = new System.Media.SoundPlayer(soundPath);
-                    player.Play();
-                }
-                catch (System.IO.FileNotFoundException) {
-                    player = new System.Media.SoundPlayer(Properties.Resources.nSound);
-                    player.Play();
-                }
+            try {
+                player = new System.Media.SoundPlayer(soundPath);
+                player.Play();
+            }
+            catch (System.IO.FileNotFoundException) {
+                player = new System.Media.SoundPlayer(Properties.Resources.nSound);
+                player.Play();
             }
         }
 
         public void PlaySound(string favouriteSound) {
-            if (ConfigMgnr.I.PlaySound) {
-                try {
-                    player = new System.Media.SoundPlayer(ConfigMgnr.I.FolderPath + @"\group sounds\" + favouriteSound);
-                    player.Play();
-                }
-                catch (System.IO.FileNotFoundException) {
-                    player = new System.Media.SoundPlayer(Properties.Resources.nSound);
-                    player.Play();
-                }
+            try {
+                player = new System.Media.SoundPlayer(ConfigMgnr.I.FolderPath + @"\group sounds\" + favouriteSound);
+                player.Play();
+            }
+            catch (System.IO.FileNotFoundException) {
+                player = new System.Media.SoundPlayer(Properties.Resources.nSound);
+                player.Play();
             }
         }
 

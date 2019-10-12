@@ -108,11 +108,10 @@
                                ToolTip="This is how long in seconds, the popup/notification window should stay up before automatically closing down."/>
                     <TextBox x:Name="boxPopTime" Width="38" PreviewTextInput="PreviewInputBoxNumbers" KeyDown="boxPopTime_KeyDown" TextChanged="boxPopTime_TextChanged" />
                 </WrapPanel>
-                <WrapPanel Visibility="Collapsed">
-                    <TextBlock Style="{DynamicResource StandardText}" Text="Offline Mode" 
-                               ToolTip="For testing. Restart required upon change. This disables the timer that periodically contacts the twitch servers." />
-                    <CheckBox x:Name="chkUpd" Margin="0,3,0,0" Click="chkUpd_Checked" />
-                </WrapPanel>
+              <WrapPanel>
+                <TextBlock Text="Display Mode" Style="{DynamicResource StandardText}" ToolTip="Different options relating to sound and what should be shown as a notification."/>
+                <ComboBox x:Name="dropModeSelect" SelectionChanged="dropModeSelect_SelectionChanged" />
+              </WrapPanel>
                 <WrapPanel>
                     <TextBlock Style="{DynamicResource StandardText}" Text="Open Streams With Script" 
                                ToolTip="When clicking on a name in the Twitch Notification window,&#10;it will default to opening the livestream in the default browser.&#10;With this checked, it instead uses the StartStream.cmd script&#10;that is configurable by the user. Launch away with your preferred software!&#10;Located in the Config Folder." />
@@ -131,18 +130,10 @@
                     <CheckBox x:Name="chkMin" Margin="0,3,0,0" Click="chkMin_Checked" />
                 </WrapPanel>
                 <WrapPanel>
-                    <TextBlock Style="{DynamicResource StandardText}" Text="Sound on/off" 
-                               ToolTip="Checked for sound, unchecked for silence.
-                               &#10;The sound can be whatever you want, as long as it is a Waveform Audio File.
-                               &#10;Add sound by placing any file named sound.wav in the Config Folder. Delete it to use the default sound."/>
-                    <CheckBox x:Name="chkSound" Margin="0,3,0,0" Click="chkSound_Checked" />
-                </WrapPanel>
-                <WrapPanel>
                     <Button x:Name="btnSoundSelect" Style="{DynamicResource DefaultButton}" Content="Select Sound (.wav)" Click="btnSoundSelect_Click" />
                 </WrapPanel>
                 <WrapPanel>
-                    <TextBlock Text="Monitor" Style="{DynamicResource StandardText}" Margin="0,0,5,0" 
-                               ToolTip="For systems utilizing multiple monitors. Select which monitor the notification window should appear on. &#10;Indexing starts at 0 for the primary screen."/>
+                    <TextBlock Text="Monitor" Style="{DynamicResource StandardText}" Margin="0,0,5,0"  ToolTip="For systems utilizing multiple monitors. Select which monitor the notification window should appear on. &#10;Indexing starts at 0 for the primary screen."/>
                     <ComboBox x:Name="dropMonitorSelect" SelectionChanged="dropMonitorSelect_SelectionChanged" Margin="0,0,0,5" />
                 </WrapPanel>
                 <Separator Margin="0,0,0,9" Width="200" Background="{DynamicResource Color_BtnBG}" />

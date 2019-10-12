@@ -4,6 +4,7 @@ using System.Configuration;
 using System.Data;
 using System.Linq;
 using System.Threading.Tasks;
+using System.Net;
 using System.Windows;
 using System.Windows.Media;
 
@@ -16,6 +17,10 @@ namespace ArethruNotifier {
         public App() {
             this.Startup += App_Startup;
             this.Exit += App_Exit;
+
+            // TODO search on up to date solution
+            ServicePointManager.Expect100Continue = true;
+            ServicePointManager.SecurityProtocol = SecurityProtocolType.Tls12;
 
             // Init ConfigMgnr
             var test = ConfigMgnr.I.ConfigPath;
@@ -43,9 +48,7 @@ namespace ArethruNotifier {
         }
 
         private void App_Startup(object sender, StartupEventArgs e) {
-            if (!ConfigMgnr.I.OfflineMode) {
-                ConfigMgnr.I.NotifyController.StartStreaminfoUpdater();
-            }
+            ConfigMgnr.I.NotifyController.StartStreaminfoUpdater();
         }
 
         private void App_Exit(object sender, ExitEventArgs e) {

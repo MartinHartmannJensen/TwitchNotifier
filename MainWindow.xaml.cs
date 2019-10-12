@@ -15,7 +15,7 @@ namespace ArethruNotifier {
     public partial class MainWindow : Window {
         AN_Console Acon;
         WinForms.NotifyIcon trayicon;
-        WinForms.MenuItem trayiconSound;
+        WinForms.MenuItem trayiconMode;
         WinForms.MenuItem trayiconMonitor;
 
         public MainWindow() {
@@ -59,15 +59,15 @@ namespace ArethruNotifier {
             trayicon.BalloonTipText = "Arethru Twitch Notifier";
             trayicon.ContextMenu = new WinForms.ContextMenu(new WinForms.MenuItem[]
             {
+                new WinForms.MenuItem("Modes"),
                 new WinForms.MenuItem("Monitor"),
                 new WinForms.MenuItem("Refresh", trayicon_RefreshStreamInfo),
                 new WinForms.MenuItem("Main Window", trayicon_OpenMainWindow),
-                new WinForms.MenuItem("Sound", trayicon_Sound),
                 new WinForms.MenuItem("Exit", trayicon_Exit)
             });
 
-            trayiconSound = trayicon.ContextMenu.MenuItems[3];
-            trayiconMonitor = trayicon.ContextMenu.MenuItems[0];
+            trayiconMode = trayicon.ContextMenu.MenuItems[0];
+            trayiconMonitor = trayicon.ContextMenu.MenuItems[1];
             trayicon.MouseUp += trayicon_Click;
 
             trayicon.Visible = true;
@@ -79,11 +79,8 @@ namespace ArethruNotifier {
             }
             boxUpdFreq.Text = ConfigMgnr.I.UpdateFrequency.ToString();
             boxPopTime.Text = ConfigMgnr.I.NotificationScreenTime.ToString();
-            chkUpd.IsChecked = ConfigMgnr.I.OfflineMode;
             chkWin.IsChecked = ConfigMgnr.I.StartWithWindows;
             chkMin.IsChecked = ConfigMgnr.I.StartMinimized;
-            chkSound.IsChecked = ConfigMgnr.I.PlaySound;
-            trayiconSound.Checked = ConfigMgnr.I.PlaySound;
             chkScript.IsChecked = ConfigMgnr.I.OpenStreamWithScript;
 
 
@@ -97,10 +94,19 @@ namespace ArethruNotifier {
             dropMonitorSelect.ItemsSource = dropArr;
             dropMonitorSelect.SelectedIndex = ConfigMgnr.I.DisplayMonitor;
             trayiconMonitor.MenuItems[ConfigMgnr.I.DisplayMonitor].Checked = true;
+
+            //Mode selection setup
+            var modeNames = Enum.GetNames(typeof(NotifyCtr.NotifyModes));
+            foreach (var item in modeNames) {
+                trayiconMode.MenuItems.Add(new WinForms.MenuItem(item, trayicon_OnModeClick));
+            }
+            dropModeSelect.ItemsSource = modeNames;
+            dropModeSelect.SelectedIndex = ConfigMgnr.I.Mode;
+            trayiconMode.MenuItems[ConfigMgnr.I.Mode].Checked = true;
         }
 
         public void UpdateFollowsList() {
-            var tup = ConfigMgnr.I.DataHandler.GetFollows();
+            var tup = ConfigMgnr.I.NotifyController.DataHandler.GetFollowLists();
             FollowsList.ItemsSource = tup.Item1;
             FollowsList2.ItemsSource = tup.Item2;
         }
@@ -126,21 +132,28 @@ namespace ArethruNotifier {
             trayiconMonitor.MenuItems[selection].Checked = true;
         }
 
+        void SetTrayModeSelection(int selection) {
+            foreach (WinForms.MenuItem item in trayiconMode.MenuItems) {
+                item.Checked = false;
+            }
+            trayiconMode.MenuItems[selection].Checked = true;
+        }
+
         #endregion
 
 
         #region Trayicon Eventhandlers
 
-        private void trayicon_RefreshStreamInfo(object obj, EventArgs e) {
+        private async void trayicon_RefreshStreamInfo(object obj, EventArgs e) {
             ConfigMgnr.I.NotifyController.StopSound();
-            ConfigMgnr.I.DataHandler.UpdateLive(TwitchDataHandler.UpdateMode.Force);
+            await ConfigMgnr.I.NotifyController.DataHandler.Update();
+            ConfigMgnr.I.NotifyController.DisplayNotification();
         }
 
         private void trayicon_OpenMainWindow(object sender, EventArgs e) {
             this.Show();
             this.ShowInTaskbar = true;
             this.WindowState = System.Windows.WindowState.Normal;
-            //trayicon.Visible = false;
         }
 
         private void trayicon_Exit(object sender, EventArgs e) {
@@ -150,23 +163,10 @@ namespace ArethruNotifier {
         private void trayicon_Click(object sender, WinForms.MouseEventArgs e) {
             if (e.Button == WinForms.MouseButtons.Left) {
                 ConfigMgnr.I.NotifyController.StopSound();
-                ConfigMgnr.I.NotifyController.DisplayNotificationWindow();
+                ConfigMgnr.I.NotifyController.DisplayNotification();
             }
             else if (e.Button == WinForms.MouseButtons.Middle) {
                 trayicon_OpenMainWindow(this, EventArgs.Empty);
-            }
-        }
-
-        private void trayicon_Sound(object sender, EventArgs e) {
-            if (trayiconSound.Checked) {
-                trayiconSound.Checked = false;
-                chkSound.IsChecked = false;
-                ConfigMgnr.I.PlaySound = false;
-            }
-            else {
-                trayiconSound.Checked = true;
-                chkSound.IsChecked = true;
-                ConfigMgnr.I.PlaySound = true;
             }
         }
 
@@ -178,6 +178,12 @@ namespace ArethruNotifier {
             ConfigMgnr.I.DisplayMonitor = selection;
         }
 
+        private void trayicon_OnModeClick(object sender, EventArgs e) {
+            var s = (WinForms.MenuItem)sender;
+            ConfigMgnr.I.Mode = s.Index;
+            SetTrayModeSelection(s.Index);
+            dropModeSelect.SelectedIndex = s.Index;
+        }
 
         #endregion
 
@@ -283,15 +289,6 @@ namespace ArethruNotifier {
             System.Diagnostics.Process.Start(ConfigMgnr.I.FolderPath);
         }
 
-        //private void btnConfigEdit_Click(object sender, RoutedEventArgs e)
-        //{
-        //    System.Diagnostics.Process.Start(Environment.CurrentDirectory + @"\config.mhjconfig");
-        //}
-
-        private void chkUpd_Checked(object sender, RoutedEventArgs e) {
-            ConfigMgnr.I.OfflineMode = (bool)chkUpd.IsChecked;
-        }
-
         private void chkWin_Checked(object sender, RoutedEventArgs e) {
             ConfigMgnr.I.StartWithWindows = (bool)chkWin.IsChecked;
 
@@ -302,27 +299,25 @@ namespace ArethruNotifier {
             ConfigMgnr.I.StartMinimized = (bool)chkMin.IsChecked;
         }
 
-        private void chkSound_Checked(object sender, RoutedEventArgs e) {
-            ConfigMgnr.I.PlaySound = (bool)chkSound.IsChecked;
-            trayiconSound.Checked = (bool)chkSound.IsChecked;
-        }
-
         private void PreviewInputBoxNumbers(object sender, TextCompositionEventArgs e) {
             e.Handled = !IsTextAllowed(e.Text);
         }
 
         private void boxUpdFreq_KeyDown(object sender, KeyEventArgs e) {
             if (e.Key == Key.Enter) {
-                //ConfigMgnr.I.UpdateFrequency = int.Parse(boxUpdFreq.Text);
                 Keyboard.ClearFocus();
             }
         }
 
         private void boxPopTime_KeyDown(object sender, KeyEventArgs e) {
             if (e.Key == Key.Enter) {
-                //ConfigMgnr.I.NotificationScreenTime = int.Parse(boxPopTime.Text);
                 Keyboard.ClearFocus();
             }
+        }
+
+        private void dropModeSelect_SelectionChanged(object sender, SelectionChangedEventArgs e) {
+            ConfigMgnr.I.Mode = dropModeSelect.SelectedIndex;
+            SetTrayModeSelection(dropModeSelect.SelectedIndex);
         }
 
         private void dropMonitorSelect_SelectionChanged(object sender, SelectionChangedEventArgs e) {
@@ -380,7 +375,7 @@ namespace ArethruNotifier {
                     if (userObj.IsOk && userObj.User.Count > 0 && !sbt.Equals("")) {
                         ConfigMgnr.I.UserToken = userObj.User[0].Id;
                         ConfigMgnr.I.UserName = sbt;
-                        ConfigMgnr.I.DataHandler.UpdateLive(TwitchDataHandler.UpdateMode.Compare);
+                        ConfigMgnr.I.NotifyController.StartStreaminfoUpdater();
                         ConfigMgnr.I.Save();
                     }
                 }));
