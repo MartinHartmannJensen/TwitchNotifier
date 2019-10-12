@@ -1,8 +1,4 @@
 ﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using ArethruNotifier.Helix;
 
 namespace ArethruNotifier {
@@ -52,7 +48,7 @@ namespace ArethruNotifier {
             }
             else {
                 Out = "More arguments needed!";
-                Out = "GET OBJECT VALUE";
+                Out = "[GET OBJECT VALUE]";
             }
         }
 
@@ -89,12 +85,11 @@ namespace ArethruNotifier {
             }
         }
     }
-
-    // Work in progress, just a quick take on a commandline structure 
+    
     class AN_Console {
         MainWindow mainWin;
 
-        // Made to hold a RichTextBox's Write and Clear methods
+        // Clear Method Delegate
         public delegate void PrintMethod(string s);
         PrintMethod Acout;
         public delegate void ClearMethod();
@@ -105,12 +100,8 @@ namespace ArethruNotifier {
 
         // Recieves an unformatted string with commands
         public string In { set { CommandParse(value); } }
-
-        // Under consideration for change. These hold "Action"'s that are invoked in CommandParse(string) and set in SetTreeValue()
-        Dictionary<string, Dictionary<string, Action>> mainTree = new Dictionary<string, Dictionary<string, Action>>();
-        Dictionary<string, Action> get = new Dictionary<string, Action>();
-        Dictionary<string, Action> oneliners = new Dictionary<string, Action>();
-
+        
+        // The main guy. See abstract class CmdNode
         CmdMain main;
 
 
@@ -118,7 +109,6 @@ namespace ArethruNotifier {
             mainWin = textboxOwner;
             Acout = textbox.AppendText;
             Acclear = textbox.Document.Blocks.Clear;
-            //SetTreeValue();
             main = new CmdMain();
             main.Main(textbox.AppendText);
         }
@@ -126,74 +116,15 @@ namespace ArethruNotifier {
         void CommandParse(string s) {
             s = s.ToUpper();
             string[] cmds = s.Split(null);
+            if (cmds[0].Equals("CLEAR")) {
+                Acclear();
+            }
             try {
                 main.Execute(cmds);
             }
             catch (IndexOutOfRangeException) {
                 Out = "Unknown Command";
             }
-            
-
-            //try {
-            //    switch (cmds.Length) {
-            //        case 1:
-            //            mainTree["ONELINERS"][cmds[0]].Invoke();
-            //            break;
-            //        case 2:
-            //            mainTree[cmds[0]][cmds[1]].Invoke();
-            //            break;
-            //        default:
-            //            Out = errMsg;
-            //            break;
-            //    }
-            //}
-            //catch (IndexOutOfRangeException) {
-            //    Out = errMsg;
-            //}
-            //catch (KeyNotFoundException) {
-            //    Out = errMsg;
-            //}
         }
-
-        //void SetTreeValue() {
-        //    mainTree["GET"] = get;
-        //    mainTree["ONELINERS"] = oneliners;
-
-        //    get["STREAMS"] = new Action(async () => {
-        //        // get follows -> get streams from user ids -> display live
-        //        Helix.Follows folls = await Helix.HelixAPI.GetFollows("68744599", 100);
-        //        var idstr = folls.GenerateUserIds();
-        //        Helix.Streams strims = await Helix.HelixAPI.GetStreams(idstr);
-
-        //        foreach (var item in strims.Stream) {
-        //            if (item.IsLive) {
-        //                Out = item.Channel;
-        //            }
-        //        }
-        //    });
-
-        //    get["FOLLOWS"] = new Action(async () => {
-        //        Helix.Follows valhalla = await HelixAPI.GetFollows("68744599");
-        //        Out = "[ Users Follows ]";
-        //        foreach (var item in valhalla.Follow) {
-        //            Out = item.Name;
-        //        }
-        //    });
-
-        //    oneliners["CLEAR"] = new Action(() => {
-        //        Acclear();
-        //    });
-
-        //    oneliners["SOUND"] = new Action(() => {
-        //        ConfigMgnr.I.NotifyController.PlaySound();
-        //    });
-
-        //    oneliners["USER"] = new Action(async () => {
-        //        var user = await HelixAPI.GetUser("Arethru");
-        //        if (user.User.Count > 0) {
-        //            Out = user.User[0].Id;
-        //        }
-        //    });
-        //}
     }
 }

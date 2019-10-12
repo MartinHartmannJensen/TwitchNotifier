@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using WinForms = System.Windows.Forms;
 using ArethruNotifier.Helix;
 using TUR = ArethruNotifier.TwitchDataHandler.UpdateResult;
 
