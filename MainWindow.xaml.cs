@@ -6,8 +6,6 @@ using System.Windows.Media;
 using System.Windows.Threading;
 using WinForms = System.Windows.Forms;
 using System.Text.RegularExpressions;
-using System.Threading;
-using System.Reflection;
 using ArethruNotifier.Helix;
 
 namespace ArethruNotifier {
@@ -21,7 +19,6 @@ namespace ArethruNotifier {
         public MainWindow() {
             InitializeComponent();
             Acon = new AN_Console(DevConsoleOutput, this);
-
             this.KeyDown += Window_KeyDown;
             this.Closing += new System.ComponentModel.CancelEventHandler((object sender, System.ComponentModel.CancelEventArgs e) => {
                 ConfigMgnr.I.Save();
@@ -29,29 +26,13 @@ namespace ArethruNotifier {
 
             InitializeTrayIcon();
             Set_SettingsUI();
-            DoStartupFunctions();
-
-            // Hot fix to supress annoying script warning
-            // https://stackoverflow.com/questions/6138199/wpf-webbrowser-control-how-to-supress-script-errors/18289217#18289217
-            this.webBrowser.Loaded += (s, e) => {
-                dynamic activeX = this.webBrowser.GetType().InvokeMember("ActiveXInstance",
-                    BindingFlags.GetProperty | BindingFlags.Instance | BindingFlags.NonPublic,
-                    null, this.webBrowser, new object[] { });
-
-                activeX.Silent = true;
-            };
-        }
-
-        #region Misc. Methods
-
-
-
-        void DoStartupFunctions() {
             if (ConfigMgnr.I.StartMinimized) {
                 this.WindowState = WindowState.Minimized;
                 this.OnStateChanged(EventArgs.Empty);
             }
         }
+
+        #region Misc. Methods
 
         void InitializeTrayIcon() {
             trayicon = new WinForms.NotifyIcon();
@@ -160,9 +141,20 @@ namespace ArethruNotifier {
             this.Close();
         }
 
-        private void trayicon_Click(object sender, WinForms.MouseEventArgs e) {
+        private async void trayicon_Click(object sender, WinForms.MouseEventArgs e) {
             if (e.Button == WinForms.MouseButtons.Left) {
                 ConfigMgnr.I.NotifyController.StopSound();
+                // Special case when NoAlerts is active and nothing gets pulled by the updater thread
+                if (NotifyCtr.NotifyModes.NoAlerts == (NotifyCtr.NotifyModes)ConfigMgnr.I.Mode) {
+                    var s = ConfigMgnr.I.NotifyController.DataHandler.CurrentStreams;
+                    if (s == null) {
+                        await ConfigMgnr.I.NotifyController.DataHandler.Update();
+                    }
+                    else if (DateTime.Now.Subtract(s.CreationTime).TotalSeconds > (double)ConfigMgnr.I.UpdateFrequency) {
+                        // Prevent misuse of the api by spamming the button
+                        await ConfigMgnr.I.NotifyController.DataHandler.Update();
+                    }
+                }
                 ConfigMgnr.I.NotifyController.DisplayNotification();
             }
             else if (e.Button == WinForms.MouseButtons.Middle) {
@@ -192,41 +184,13 @@ namespace ArethruNotifier {
 
         private void Window_StateChanged(object sender, EventArgs e) {
             if (System.Windows.WindowState.Minimized == this.WindowState) {
-                //trayicon.Visible = true;
                 this.Hide();
                 this.ShowInTaskbar = false;
             }
         }
 
-        // Deprecated
-        //private async void btnAuth_Click(object sender, RoutedEventArgs e) {
-        //    //APIcalls.OpenBrowserAuthenticate();
-        //    //string user_tok = APIcalls.ListenForResponse();
-        //    //DevConsoleOutput.AppendText("Usertoken Saved: " + user_tok + "\n");
-        //    //ConfigMgnr.I.UserToken = user_tok;
-        //    SetActivePanel(3);
-        //    webBrowser.Navigate(APIcalls.AuthURL);
-        //    string user_tok = await APIcalls.ListenForResponse();
-        //    DevConsoleOutput.AppendText("Usertoken Saved: " + user_tok + "\n");
-        //    ConfigMgnr.I.UserToken = user_tok;
-        //    ConfigMgnr.I.Save();
-        //    WinForms.Application.Restart();
-        //    System.Diagnostics.Process.GetCurrentProcess().Kill();
-        //}
-
-        //private void btnDeAuth_Click(object sender, RoutedEventArgs e) {
-        //    System.Diagnostics.Process.Start("http://www.twitch.tv/settings/connections");
-        //}
-
-        //private void btnTokSave_Click(object sender, RoutedEventArgs e)
-        //{
-        //    UserSettings.Default.UserToken = inputUsertoken.Text;
-        //    inputUsertoken.Clear();
-        //}
-
         private void btnSoundSelect_Click(object sender, RoutedEventArgs e) {
             System.IO.Stream soundFile = null;
-
             WinForms.OpenFileDialog opf = new WinForms.OpenFileDialog();
 
             opf.InitialDirectory = "c:\\";
@@ -332,9 +296,33 @@ namespace ArethruNotifier {
             }
         }
 
-        private void Hyperlink_Click(object sender, MouseButtonEventArgs e) {
+        private void hyberlinkFollowProfile_OnClick(object sender, MouseButtonEventArgs e) {
             var obj = (TextBlock)sender;
-            System.Diagnostics.Process.Start(obj.ToolTip.ToString());
+            var obj2 = (StackPanel)obj.Parent;
+            var obj3 = (DockPanel)obj2.Parent;
+            var textB = (TextBlock)VisualTreeHelper.GetChild(obj3, 0);
+            if (ConfigMgnr.I.OpenStreamWithScript) {
+                System.Diagnostics.Process.Start(string.Format(@"{0}\{1}", ConfigMgnr.I.FolderPath, MiscOperations.StreamFileName),
+                textB.Text);
+            }
+            else {
+                System.Diagnostics.Process.Start("https://twitch.tv/" + textB.Text);
+            }
+        }
+
+        private void hyberlinkFollowVod_OnClick(object sender, MouseButtonEventArgs e) {
+            var obj = (TextBlock)sender;
+            var obj2 = (StackPanel)obj.Parent;
+            var obj3 = (DockPanel)obj2.Parent;
+            var textB = (TextBlock)VisualTreeHelper.GetChild(obj3, 0);
+            var vodLink = string.Format("{0}/{1}", textB.Text, "videos?filter=archives&sort=time");
+            if (ConfigMgnr.I.OpenStreamWithScript) {
+                System.Diagnostics.Process.Start(string.Format(@"{0}\{1}", ConfigMgnr.I.FolderPath, MiscOperations.StreamFileName),
+                vodLink);
+            }
+            else {
+                System.Diagnostics.Process.Start("https://twitch.tv/" + vodLink);
+            }
         }
 
         private void sourceCodeLink_MouseDown(object sender, MouseButtonEventArgs e) {
@@ -368,7 +356,7 @@ namespace ArethruNotifier {
                 boxUpdFreq.Focus();
                 Keyboard.ClearFocus();
                 textTokenHelp.Visibility = Visibility.Collapsed;
-                
+
                 Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () => {
                     string sbt = Regex.Replace(boxToken.Text, @"\s+", "");
                     Users userObj = await HelixAPI.GetUser(sbt);

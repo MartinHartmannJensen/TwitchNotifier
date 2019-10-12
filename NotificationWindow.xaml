@@ -32,8 +32,6 @@
                     <TextBlock Name="TextTime" Text="received at" Grid.Column="0" Grid.Row="1" Margin="7,-4,2,2" Foreground="{DynamicResource Color_DefaultText}" FontSize="9"></TextBlock>
                 </Grid>
 
-                <!--<TextBlock TextWrapping="Wrap" Margin="5" Foreground="White" x:Name="StreamList" Text="" FontSize="10"/>-->
-
                 <StackPanel x:Name="ErrorPanel" Visibility="Collapsed">
                     <Separator Margin="3,2,3,7" />
                     <TextBlock Text="No info to show" HorizontalAlignment="Center" Foreground="{DynamicResource Color_DefaultText}" FontStyle="Italic" />

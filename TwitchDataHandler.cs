@@ -84,7 +84,7 @@ namespace ArethruNotifier {
             return UpdateResult.Update;
         }
 
-        
+
         private async Task<Streams> AddGames(Streams s) {
             // check if register is missing a game
             var dummyStreamsObj = new Streams();

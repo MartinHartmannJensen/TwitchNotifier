@@ -1,6 +1,5 @@
 ﻿using System;
 using System.Threading;
-using WinForms = System.Windows.Forms;
 using ArethruNotifier.Helix;
 using TUR = ArethruNotifier.TwitchDataHandler.UpdateResult;
 
@@ -19,7 +18,7 @@ namespace ArethruNotifier {
         string soundPath = ConfigMgnr.I.FolderPath + @"\sound.wav";
 
         public enum NotifyModes {
-            AllBells, OnlyFavorites, OnlyDisplayFavorites, NoSound
+            AllBells, OnlyFavorites, OnlyDisplayFavorites, NoSound, NoAlerts
         }
 
         public NotifyCtr() {
@@ -33,9 +32,9 @@ namespace ArethruNotifier {
 
             updater = new Thread(new ThreadStart(async () => {
                 while (true) {
-                    TUR result = await tdh.Update();
-                    if (result == TUR.Update || result == TUR.Favorite) {
-                        var m = (NotifyModes)ConfigMgnr.I.Mode;
+                    var m = (NotifyModes)ConfigMgnr.I.Mode;
+                    if (m != NotifyModes.NoAlerts) {
+                        TUR result = await tdh.Update();
                         Display(result, m);
                     }
                     Thread.Sleep(ConfigMgnr.I.UpdateFrequency * 1000);
@@ -61,36 +60,27 @@ namespace ArethruNotifier {
         /// Create a popupwindow with NotifyModes settings
         /// </summary>
         private void Display(TUR update, NotifyModes mode) {
-            // Modes:
-            // -No Sound
-            // No sound
-            // Display both
-            // - Only Display Favorites
-            // No sound
-            // Display Favorite
-            // -Only Favorites
-            // No Normal Sound
-            // Display Favorites
-            // -All Bells
-            // Sound and Display Both
-
+            if (update == TUR.Nothing) {
+                return;
+            }
             int popT = ConfigMgnr.I.NotificationScreenTime;
 
             if (update == TUR.Update) {
-                if (mode == NotifyModes.AllBells) {
-                    CreateWindow(tdh.CurrentStreams, popT);
-                    PlaySound();
-                }
-                else {
-                    CreateWindow(tdh.CurrentStreams, popT);
+                switch (mode) {
+                    case NotifyModes.AllBells:
+                        CreateWindow(tdh.CurrentStreams, popT);
+                        PlaySound();
+                        break;
+                    case NotifyModes.NoSound:
+                        CreateWindow(tdh.CurrentStreams, popT);
+                        break;
+                    default:
+                        break;
                 }
             }
             else {
                 switch (mode) {
                     case NotifyModes.AllBells:
-                        CreateWindow(tdh.CurrentStreams, tdh.CurrentFavorites.Poptime);
-                        PlaySound(tdh.CurrentFavorites.Soundfile);
-                        break;
                     case NotifyModes.OnlyFavorites:
                         CreateWindow(tdh.CurrentStreams, tdh.CurrentFavorites.Poptime);
                         PlaySound(tdh.CurrentFavorites.Soundfile);

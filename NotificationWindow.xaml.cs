@@ -43,7 +43,7 @@ namespace ArethruNotifier {
             string selectedName = selected.Channel.ToLower();
 
             if (!ConfigMgnr.I.OpenStreamWithScript) {
-                System.Diagnostics.Process.Start("http://www.twitch.tv/" + selectedName);
+                System.Diagnostics.Process.Start("https://www.twitch.tv/" + selectedName);
             }
             else {
                 System.Diagnostics.Process.Start(string.Format(@"{0}\{1}", ConfigMgnr.I.FolderPath, MiscOperations.StreamFileName),
