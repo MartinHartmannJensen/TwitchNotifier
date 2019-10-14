@@ -5,8 +5,6 @@ Can be configured to run minimized in the background, displaying notifications a
 
 #### [Download the Installer][Releases]
 
-#### [Getting Started - A Quick Guide][Howto]
-
 Made with [package developed by Newtonsoft][newt]
 
 Licensed under the MIT License
