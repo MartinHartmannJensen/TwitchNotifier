@@ -86,10 +86,12 @@ namespace ArethruNotifier {
             trayiconMode.MenuItems[ConfigMgnr.I.Mode].Checked = true;
         }
 
-        public void UpdateFollowsList() {
-            var tup = ConfigMgnr.I.NotifyController.DataHandler.GetFollowLists();
-            FollowsList.ItemsSource = tup.Item1;
-            FollowsList2.ItemsSource = tup.Item2;
+        public async void UpdateFollowsList() {
+            var fl = await ConfigMgnr.I.NotifyController.DataHandler.GetFollowLists();
+            if (fl.isGood) {
+                FollowsList.ItemsSource = fl.online;
+                FollowsList2.ItemsSource = fl.offline;
+            }
         }
 
         void SetActivePanel(int i) {

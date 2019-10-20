@@ -23,7 +23,6 @@ namespace ArethruNotifier {
 
         public NotifyCtr() {
             tdh = new TwitchDataHandler();
-            tdh.UpdateFollows();
         }
 
         public void StartStreaminfoUpdater() {

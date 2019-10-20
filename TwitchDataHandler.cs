@@ -6,7 +6,6 @@ using ArethruNotifier.Helix;
 
 namespace ArethruNotifier {
     public class TwitchDataHandler {
-
         Streams currentStreams = null;
         public Streams CurrentStreams { get { return currentStreams; } }
         Follows currentFollows = null;
@@ -17,16 +16,6 @@ namespace ArethruNotifier {
 
         public enum UpdateResult {
             Nothing, Update, Favorite
-        }
-
-        /// <summary>
-        /// Fetches a new list of Follows accessed at CurrentFollows
-        /// </summary>
-        public async void UpdateFollows() {
-            var tempF = await HelixAPI.GetFollows(ConfigMgnr.I.UserToken);
-            if (tempF.IsOk) {
-                currentFollows = tempF;
-            }
         }
 
         public async Task<UpdateResult> Update() {
@@ -109,34 +98,50 @@ namespace ArethruNotifier {
 
             // populate parameter object with game names
             foreach (var item in s.Stream) {
-                item.Game = gameRegister[item.GameId].Name;
+                try {
+                    item.Game = gameRegister[item.GameId].Name;
+                }
+                catch (KeyNotFoundException) {
+                    item.Game = " ";
+                }
             }
 
             return s;
         }
 
-        public Tuple<List<Follow>, List<Follow>> GetFollowLists() {
-            List<Follow> onlineF = new List<Follow>();
-            List<Follow> offlineF = new List<Follow>();
+        public struct FollowLists {
+            public bool isGood;
+            public List<Follow> online;
+            public List<Follow> offline;
+        }
 
+        public async Task<FollowLists> GetFollowLists() {
+            var f = new FollowLists();
+            f.isGood = true;
             if (currentFollows == null) {
-                return Tuple.Create(onlineF, offlineF);
+                var tempF = await HelixAPI.GetFollows(ConfigMgnr.I.UserToken);
+                if (!tempF.IsOk) {
+                    f.isGood = false;
+                    return f; 
+                }
+                currentFollows = tempF;
             }
+
+            f.online = new List<Follow>();
+            f.offline = new List<Follow>();
 
             foreach (var item in currentFollows.Follow) {
-                if (currentStreams.Stream.Exists(x => x.Channel.Equals(item.Name))) {
-                    onlineF.Add(item);
+                if (currentStreams != null && currentStreams.Stream.Exists(x => x.Channel.Equals(item.Name))) {
+                    f.online.Add(item);
                 }
                 else {
-                    offlineF.Add(item);
+                    f.offline.Add(item);
                 }
             }
 
-            onlineF = onlineF.OrderBy(x => x.Name).ToList();
-
-            offlineF = offlineF.OrderBy(x => x.Name).ToList();
-
-            return Tuple.Create(onlineF, offlineF);
+            f.online = f.online.OrderBy(x => x.Name).ToList();
+            f.offline = f.offline.OrderBy(x => x.Name).ToList();
+            return f;
         }
     }
 }
