@@ -20,12 +20,12 @@ namespace ArethruNotifier {
 
         public async Task<UpdateResult> Update() {
             // If no token assigned, don't do anything
-            if (ConfigMgnr.I.UserToken.Equals("notoken")) {
+            if (ConfigMgnr.I.Token.Equals("0")) {
                 return UpdateResult.Nothing;
             }
 
             if (currentFollows == null) {
-                var tempF = await HelixAPI.GetFollows(ConfigMgnr.I.UserToken);
+                var tempF = await HelixAPI.GetFollows(ConfigMgnr.I.User);
                 if (!tempF.IsOk) {
                     return UpdateResult.Nothing;
                 }
@@ -119,7 +119,7 @@ namespace ArethruNotifier {
             var f = new FollowLists();
             f.isGood = true;
             if (currentFollows == null) {
-                var tempF = await HelixAPI.GetFollows(ConfigMgnr.I.UserToken);
+                var tempF = await HelixAPI.GetFollows(ConfigMgnr.I.User);
                 if (!tempF.IsOk) {
                     f.isGood = false;
                     return f; 

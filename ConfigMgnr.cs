@@ -8,10 +8,12 @@ namespace ArethruNotifier {
         private static ConfigMgnr instance = new ConfigMgnr();
         public static ConfigMgnr I { get { return instance; } }
         public override string ConfigPath { get { return Environment.GetFolderPath(Environment.SpecialFolder.MyDocuments) + @"\ArethruNotifier\config.ini"; } }
+        public override string CurrentBuild { get { return "7.2.0-TheAuthRectification"; } }
 
         private ConfigMgnr() : base() {
-            DefaultCollection["UserToken"] = "notoken";
-            DefaultCollection["UserName"] = "0";
+            DefaultCollection["Build"] = "0";
+            DefaultCollection["Token"] = "0";
+            DefaultCollection["User"] = "0";
             DefaultCollection["UpdateFrequency"] = "60";
             DefaultCollection["NotificationScreenTime"] = "60";
             DefaultCollection["Mode"] = "0";
@@ -27,8 +29,9 @@ namespace ArethruNotifier {
             DefaultCollection["StreamLaunch"] = "0";
             RunStartup();
         }
-        public string UserToken { get { return Get("UserToken"); } set { Set("UserToken", value); } }
-        public string UserName { get { return Get("UserName"); } set { Set("UserName", value); } }
+        public string Build { get { return Get("Build"); } set { Set("Build", value); } }
+        public string Token { get { return Get("Token"); } set { Set("Token", value); } }
+        public string User { get { return Get("User"); } set { Set("User", value); } }
         public int UpdateFrequency { get { return int.Parse(Get("UpdateFrequency")); } set { Set("UpdateFrequency", value); } }
         public int NotificationScreenTime { get { return int.Parse(Get("NotificationScreenTime")); } set { Set("NotificationScreenTime", value); } }
         public int Mode { get { return int.Parse(Get("Mode")); } set { Set("Mode", value); } }
@@ -66,6 +69,7 @@ namespace CustomConfigProject.Base {
     /// RunStartup() method in contructor
     /// </summary>
     abstract class SettingsManager {
+        public abstract string CurrentBuild { get; }
         public abstract string ConfigPath { get; }
         public string FolderPath { get; protected set; }
 
@@ -81,6 +85,11 @@ namespace CustomConfigProject.Base {
 
             if (File.Exists(ConfigPath)) {
                 ReadConfiguration();
+                if (!Get("Build").Equals(CurrentBuild)) {
+                    SetValuesFromDefault();
+                    PropertiesCollection["Build"] = CurrentBuild;
+                    Save();
+                }
             }
             else {
                 SetValuesFromDefault();

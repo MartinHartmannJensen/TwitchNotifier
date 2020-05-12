@@ -78,15 +78,10 @@
       <!--Settings-->
       <StackPanel x:Name="SettingsPanel" Style="{DynamicResource SettingsPanel}" Visibility="Visible" HorizontalAlignment="Stretch">
         <WrapPanel>
-          <TextBlock Style="{DynamicResource StandardText}" FontSize="17" Text="Twitch Username"
-                       ToolTip="No need for authentication, just type a name and hit enter." />
+          <TextBlock Style="{DynamicResource StandardText}" FontSize="17" Text="Login" />
         </WrapPanel>
-        <WrapPanel>
-          <TextBox x:Name="boxToken" TextAlignment="Center" Width="150" KeyDown="boxToken_KeyDown" GotFocus="boxToken_Focus" />
-        </WrapPanel>
-        <WrapPanel>
-          <TextBlock x:Name="textTokenHelp" Visibility="Collapsed" Style="{DynamicResource StandardText}" Text="'Enter' for change to take effect." />
-        </WrapPanel>
+                <WrapPanel>
+                </WrapPanel>
         <Separator Margin="0,9" Width="200" Background="{DynamicResource Color_BtnBG}" />
         <WrapPanel>
           <TextBlock Style="{DynamicResource StandardText}" Text="Update Frequency"

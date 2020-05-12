@@ -55,9 +55,6 @@ namespace ArethruNotifier {
         }
 
         void Set_SettingsUI() {
-            if (!ConfigMgnr.I.UserName.Equals("0")) {
-                boxToken.Text = ConfigMgnr.I.UserName;
-            }
             boxUpdFreq.Text = ConfigMgnr.I.UpdateFrequency.ToString();
             boxPopTime.Text = ConfigMgnr.I.NotificationScreenTime.ToString();
             chkWin.IsChecked = ConfigMgnr.I.StartWithWindows;
@@ -351,29 +348,6 @@ namespace ArethruNotifier {
             if (numba < 3)
                 numba = 3;
             ConfigMgnr.I.NotificationScreenTime = numba;
-        }
-
-        private void boxToken_KeyDown(object sender, KeyEventArgs e) {
-            if (e.Key == Key.Enter) {
-                boxUpdFreq.Focus();
-                Keyboard.ClearFocus();
-                textTokenHelp.Visibility = Visibility.Collapsed;
-
-                Dispatcher.BeginInvoke(DispatcherPriority.Background, new Action(async () => {
-                    string sbt = Regex.Replace(boxToken.Text, @"\s+", "");
-                    Users userObj = await HelixAPI.GetUser(sbt);
-                    if (userObj.IsOk && userObj.User.Count > 0 && !sbt.Equals("")) {
-                        ConfigMgnr.I.UserToken = userObj.User[0].Id;
-                        ConfigMgnr.I.UserName = sbt;
-                        ConfigMgnr.I.NotifyController.StartStreaminfoUpdater();
-                        ConfigMgnr.I.Save();
-                    }
-                }));
-            }
-        }
-
-        private void boxToken_Focus(object sender, EventArgs e) {
-            textTokenHelp.Visibility = Visibility.Visible;
         }
 
         #endregion
