@@ -24,6 +24,14 @@ namespace ArethruNotifier {
                 return UpdateResult.Nothing;
             }
 
+            // Get user id if not assigned
+            if (ConfigMgnr.I.User.Equals("0")) {
+                var ussr = Helix.HelixAPI.GetUser(ConfigMgnr.I.Token);
+                if (ussr.Result.IsOk) {
+                    ConfigMgnr.I.User = ussr.Result.User[0].Id;
+                }
+            }
+
             if (currentFollows == null) {
                 var tempF = await HelixAPI.GetFollows(ConfigMgnr.I.User);
                 if (!tempF.IsOk) {

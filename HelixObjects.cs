@@ -5,6 +5,11 @@ using System.Linq;
 using System.Text;
 
 namespace ArethruNotifier.Helix {
+    public class Token {
+        [JsonProperty("access_token")]
+        public string Access_Token { get; set; }
+    }
+
     public class Users {
         public bool IsOk { get; set; } = false;
 

@@ -53,7 +53,7 @@ namespace ArethruNotifier {
         }
 
         private async void User(string param) {
-            var user = await HelixAPI.GetUser(param);
+            var user = await HelixAPI.GetUserBy(param);
             if (user.User.Count > 0) {
                 Out = user.User[0].Id;
             }

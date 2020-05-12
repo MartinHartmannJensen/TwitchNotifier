@@ -350,6 +350,17 @@ namespace ArethruNotifier {
             ConfigMgnr.I.NotificationScreenTime = numba;
         }
 
+        private async void btnAuth_Click(object sender, RoutedEventArgs e) {
+            //SetActivePanel(3);
+            //webBrowser.Navigate(new Uri(Helix.HelixAPI.AuthURL));
+            System.Diagnostics.Process.Start(Helix.HelixAPI.AuthURL);
+            string user_tok = await Helix.HelixAPI.ListenForResponse();
+            ConfigMgnr.I.Token = user_tok;
+            ConfigMgnr.I.Save();
+            WinForms.Application.Restart();
+            System.Diagnostics.Process.GetCurrentProcess().Kill();
+        }
+
         #endregion
     }
 }
