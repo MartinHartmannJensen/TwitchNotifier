@@ -54,5 +54,12 @@ namespace ArethruNotifier {
         private void App_Exit(object sender, ExitEventArgs e) {
             ConfigMgnr.I.NotifyController.StopStreamInfoUpdater();
         }
+
+        [System.STAThread]
+        public static void Main() {
+            ArethruNotifier.App app = new App();
+            app.InitializeComponent();
+            app.Run();
+        }
     }
 }
