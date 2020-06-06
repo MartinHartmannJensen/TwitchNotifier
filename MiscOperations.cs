@@ -4,6 +4,7 @@ using WinForms = System.Windows.Forms;
 using Microsoft.Win32;
 using System.Linq;
 using System.Xml.Linq;
+using System.Data;
 
 namespace ArethruNotifier {
     public static class MiscOperations {
@@ -15,7 +16,13 @@ namespace ArethruNotifier {
         static string xmlfile = "favorites.xml";
         static string xmlFolder = "group sounds";
 
-
+        public static void RemoveConfig() {
+            try {
+                Directory.Delete(ConfigMgnr.I.FolderPath, true);
+            }
+            catch (Exception) {
+            }
+        }
 
         public static void CreateStreamLaunchFile(string FolderPath) {
             Directory.CreateDirectory(FolderPath);

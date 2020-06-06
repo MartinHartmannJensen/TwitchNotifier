@@ -107,6 +107,7 @@ namespace CustomConfigProject.Base {
         protected void Set(string prop, object value) {
             var val = value.ToString();
             PropertiesCollection[prop] = val;
+            Save();
         }
 
         // Write to config file

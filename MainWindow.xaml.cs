@@ -20,9 +20,6 @@ namespace ArethruNotifier {
             InitializeComponent();
             Acon = new AN_Console(DevConsoleOutput, this);
             this.KeyDown += Window_KeyDown;
-            this.Closing += new System.ComponentModel.CancelEventHandler((object sender, System.ComponentModel.CancelEventArgs e) => {
-                ConfigMgnr.I.Save();
-            });
 
             InitializeTrayIcon();
             Set_SettingsUI();
@@ -92,7 +89,7 @@ namespace ArethruNotifier {
         }
 
         void SetActivePanel(int i) {
-            Panel[] pans = { FollowPanel, SettingsPanel, ConsolePanel, BrowserPanel };
+            Panel[] pans = { FollowPanel, SettingsPanel, ConsolePanel, UninstallPanel };
 
             foreach (var item in pans) {
                 item.Visibility = Visibility.Hidden;
@@ -237,17 +234,6 @@ namespace ArethruNotifier {
                 UpdateFollowsList();
         }
 
-        private void btnRestart_Click(object sender, RoutedEventArgs e) {
-            ConfigMgnr.I.Save();
-            WinForms.Application.Restart();
-            System.Diagnostics.Process.GetCurrentProcess().Kill();
-        }
-
-        private void btnRestart_Click2(object sender, RoutedEventArgs e) {
-            WinForms.Application.Restart();
-            System.Diagnostics.Process.GetCurrentProcess().Kill();
-        }
-
         private void btnConfigPath_Click(object sender, RoutedEventArgs e) {
             System.Diagnostics.Process.Start(ConfigMgnr.I.FolderPath);
         }
@@ -351,16 +337,27 @@ namespace ArethruNotifier {
         }
 
         private async void btnAuth_Click(object sender, RoutedEventArgs e) {
-            //SetActivePanel(3);
-            //webBrowser.Navigate(new Uri(Helix.HelixAPI.AuthURL));
             System.Diagnostics.Process.Start(Helix.HelixAPI.AuthURL);
             string user_tok = await Helix.HelixAPI.ListenForResponse();
             ConfigMgnr.I.Token = user_tok;
-            ConfigMgnr.I.Save();
             WinForms.Application.Restart();
             System.Diagnostics.Process.GetCurrentProcess().Kill();
         }
 
+        private void btnUninstall_Click(object sender, RoutedEventArgs e) {
+            SetActivePanel(3);
+        }
         #endregion
+
+        private void btnGotosettings_Click(object sender, RoutedEventArgs e) {
+            SetActivePanel(1);
+        }
+
+        private void btnRemoveSettings_Click(object sender, RoutedEventArgs e) {
+            MiscOperations.SetRegistryStartup(false);
+            MiscOperations.RemoveConfig();
+            WinForms.Application.Exit();
+            System.Diagnostics.Process.GetCurrentProcess().Kill();
+        }
     }
 }
